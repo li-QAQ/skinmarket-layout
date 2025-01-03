@@ -1,3 +1,20 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
+  "plugins": ["prettier", "@typescript-eslint", "unused-imports"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "prettier/prettier": "error",
+    "no-unused-vars": "off", // 關閉默認 no-unused-vars 規則
+    "unused-imports/no-unused-imports": "error", // 自動刪除未使用的 import
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "vars": "all", // 檢查所有變量
+        "args": "after-used", // 忽略最後使用的函數參數
+        "ignoreRestSiblings": true, // 忽略對象解構中的剩餘變量
+        "varsIgnorePattern": "^_", // 忽略名稱以 _ 開頭的變量
+        "argsIgnorePattern": "^_" // 忽略名稱以 _ 開頭的參數
+      }
+    ]
+  }
 }
