@@ -13,7 +13,7 @@ const useRouteStore = create<RouteStore>()(
       key: "home",
     }),
     {
-      name: "auth-storage", // 存儲的 key
+      name: "route-storage", // 存儲的 key
     },
   ),
 );
