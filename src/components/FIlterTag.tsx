@@ -1,18 +1,18 @@
-import { RightOutlined } from "@ant-design/icons";
+import { RightOutlined } from '@ant-design/icons';
 
 const FilterTag = () => {
   const itmes = [
     {
-      label: "類型",
+      label: '類型',
     },
     {
-      label: "價格",
+      label: '價格',
     },
     {
-      label: "品牌",
+      label: '品牌',
     },
     {
-      label: "尺寸",
+      label: '尺寸',
     },
   ];
 

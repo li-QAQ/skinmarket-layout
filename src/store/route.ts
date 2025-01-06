@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface RouteStore {
   path: string;
@@ -9,11 +9,11 @@ interface RouteStore {
 const useRouteStore = create<RouteStore>()(
   persist(
     (set, get) => ({
-      path: "/",
-      key: "home",
+      path: '/',
+      key: 'home',
     }),
     {
-      name: "route-storage", // 存儲的 key
+      name: 'route-storage', // 存儲的 key
     },
   ),
 );

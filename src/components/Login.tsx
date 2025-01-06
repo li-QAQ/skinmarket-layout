@@ -1,6 +1,6 @@
-import useAuthStore from "@/store/auth";
-import { Button, Form, Input, Modal, Segmented } from "antd";
-import { useState } from "react";
+import useAuthStore from '@/store/auth';
+import { Button, Form, Input, Modal, Segmented } from 'antd';
+import { useState } from 'react';
 
 interface LoginModalProps {
   open: boolean;
@@ -10,7 +10,7 @@ interface LoginModalProps {
 const LoginModal = (props: LoginModalProps) => {
   const { setLogin } = useAuthStore();
 
-  const [value, setValue] = useState("登入");
+  const [value, setValue] = useState('登入');
   const hanldleClose = () => {
     props.setOpen(false);
   };
@@ -34,12 +34,12 @@ const LoginModal = (props: LoginModalProps) => {
     >
       <div className="space-y-4">
         <Segmented
-          options={["登入", "註冊"]}
+          options={['登入', '註冊']}
           onChange={(v) => {
             setValue(v);
           }}
         />
-        {value === "登入" && (
+        {value === '登入' && (
           <Form layout="vertical" onFinish={handleSubmit}>
             <Form.Item label="帳號">
               <Input />
@@ -55,7 +55,7 @@ const LoginModal = (props: LoginModalProps) => {
           </Form>
         )}
 
-        {value === "註冊" && (
+        {value === '註冊' && (
           <Form layout="vertical">
             <Form.Item label="帳號">
               <Input />

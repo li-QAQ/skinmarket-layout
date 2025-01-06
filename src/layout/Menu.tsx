@@ -1,30 +1,30 @@
-"use client";
-import LoginModal from "@/components/Login";
-import useAuthStore from "@/store/auth";
-import { Avatar, Button, Dropdown } from "antd";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
-import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
+'use client';
+import LoginModal from '@/components/Login';
+import useAuthStore from '@/store/auth';
+import { Avatar, Button, Dropdown } from 'antd';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 
 const LayoutMenu = () => {
   const pathname = usePathname();
   const router = useRouter();
   const itmes = [
     {
-      label: "市場",
-      path: "/",
+      label: '市場',
+      path: '/',
     },
     {
-      label: "背包",
-      path: "/bag",
+      label: '背包',
+      path: '/bag',
     },
     {
-      label: "出售管理",
-      path: "/sell",
+      label: '出售管理',
+      path: '/sell',
     },
     {
-      label: "訂單管理",
-      path: "/order",
+      label: '訂單管理',
+      path: '/order',
     },
   ];
   const [isOpenLogin, setIsOpenLogin] = useState(false);
@@ -40,21 +40,21 @@ const LayoutMenu = () => {
 
   const menuItems: any = [
     {
-      key: "profile",
-      label: "個人資料",
+      key: 'profile',
+      label: '個人資料',
       icon: <UserOutlined />,
       onClick: () => {
-        router.push("/profile");
+        router.push('/profile');
       },
     },
     {
-      key: "signOut",
-      label: "登出",
+      key: 'signOut',
+      label: '登出',
       icon: <LogoutOutlined />,
       onClick: () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem('token');
         setLogin(false);
-        router.push("/");
+        router.push('/');
       },
     },
   ];
@@ -74,7 +74,7 @@ const LayoutMenu = () => {
                 onClick={() => hanldleClick(item.path)}
                 style={{
                   borderBottom:
-                    pathname === item.path ? "2px solid white" : "none",
+                    pathname === item.path ? '2px solid white' : 'none',
                 }}
               >
                 <div>{item.label}</div>

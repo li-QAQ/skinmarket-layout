@@ -1,10 +1,10 @@
-"use client";
-import "./globals.css";
-import LayoutMenu from "@/layout/Menu";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { ConfigProvider } from "antd";
-import theme from "@/theme/themeConfig";
-import LayoutMenuMobile from "@/layout/LayoutMenuMobile";
+'use client';
+import './globals.css';
+import LayoutMenu from '@/layout/Menu';
+import { AntdRegistry } from '@ant-design/nextjs-registry';
+import { ConfigProvider } from 'antd';
+import theme from '@/theme/themeConfig';
+import LayoutMenuMobile from '@/layout/LayoutMenuMobile';
 
 export default function RootLayout({
   children,
@@ -26,7 +26,7 @@ export default function RootLayout({
               <div
                 className="mx-8"
                 style={{
-                  height: "calc(100% - 96px)",
+                  height: 'calc(100% - 96px)',
                 }}
               >
                 {children}

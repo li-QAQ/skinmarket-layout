@@ -1,5 +1,5 @@
-import { Button, Form, Input, InputNumber, Modal, Upload } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Button, Form, Input, InputNumber, Modal, Upload } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 
 interface KYCModalProps {
   open: boolean;
@@ -16,7 +16,7 @@ const KYCModal = (props: KYCModalProps) => {
   };
 
   const handleSubmit = () => {
-    console.log("submit");
+    console.log('submit');
   };
 
   return (
@@ -34,7 +34,7 @@ const KYCModal = (props: KYCModalProps) => {
           rules={[
             {
               required: true,
-              message: "請輸入",
+              message: '請輸入',
             },
           ]}
         >
@@ -46,13 +46,13 @@ const KYCModal = (props: KYCModalProps) => {
           rules={[
             {
               required: true,
-              message: "請輸入",
+              message: '請輸入',
             },
           ]}
         >
           <InputNumber
             style={{
-              width: "100%",
+              width: '100%',
             }}
           />
         </Form.Item>
@@ -63,7 +63,7 @@ const KYCModal = (props: KYCModalProps) => {
             rules={[
               {
                 required: true,
-                message: "請選擇",
+                message: '請選擇',
               },
             ]}
           >
@@ -80,7 +80,7 @@ const KYCModal = (props: KYCModalProps) => {
             rules={[
               {
                 required: true,
-                message: "請選擇",
+                message: '請選擇',
               },
             ]}
           >
@@ -99,6 +99,19 @@ const KYCModal = (props: KYCModalProps) => {
               <div>上傳圖片</div>
             </button>
           </Upload>
+        </Form.Item>
+
+        <Form.Item
+          label="居住地址"
+          name="address"
+          rules={[
+            {
+              required: true,
+              message: '請輸入',
+            },
+          ]}
+        >
+          <Input />
         </Form.Item>
 
         <div className="flex justify-end space-x-4">

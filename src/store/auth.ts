@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface AuthStore {
   isLogin: boolean;
@@ -13,7 +13,7 @@ const useAuthStore = create<AuthStore>()(
       setLogin: (isLogin: boolean) => set({ isLogin }),
     }),
     {
-      name: "auth-storage", // 存儲的 key
+      name: 'auth-storage', // 存儲的 key
     },
   ),
 );

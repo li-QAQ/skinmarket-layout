@@ -1,6 +1,6 @@
-import useBag from "@/store/bagStore";
-import { Button, Checkbox, CheckboxProps } from "antd";
-import PricingModal from "./Pricing";
+import useBag from '@/store/bagStore';
+import { Button, Checkbox, CheckboxProps } from 'antd';
+import PricingModal from './Pricing';
 
 const BagBatch = () => {
   const {
@@ -15,7 +15,7 @@ const BagBatch = () => {
 
   const AllIds = items.map((item) => item.id);
 
-  const onChange: CheckboxProps["onChange"] = (e) => {
+  const onChange: CheckboxProps['onChange'] = (e) => {
     if (e.target.checked) {
       setSelectedItemIds(AllIds);
     } else {
@@ -27,9 +27,12 @@ const BagBatch = () => {
     setIsOpenPricingModal(true);
   };
   return (
-    <div className="fixed bottom-0 w-full border py-2 px-8">
+    <div
+      className="fixed left-0 bottom-0 w-full"
+      style={{ background: 'var(--secondary)' }}
+    >
       <PricingModal />
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center  p-6 ">
         <div>
           <span>
             <Checkbox

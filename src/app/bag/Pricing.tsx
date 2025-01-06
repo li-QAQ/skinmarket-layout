@@ -1,5 +1,7 @@
-import useBagStore from "@/store/bagStore";
-import { Button, Form, Modal } from "antd";
+import useBagStore from '@/store/bagStore';
+import { Button, Form, InputNumber, Modal } from 'antd';
+import Image from 'next/image';
+import { CloseOutlined } from '@ant-design/icons';
 
 const PricingModal = () => {
   const [form] = Form.useForm();
@@ -60,12 +62,12 @@ const PricingModal = () => {
         </div>
 
         <div className="flex flex-col space-y-4">
-          {/* {data.length > 0 &&
+          {data.length > 0 &&
             data.map((item, index: number) => (
               <div key={item.id} className="flex gap-10">
                 <div className="basis-1/6 flex">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 relative border-2 rounded-2xl">
+                    <div className="w-16 h-16 relative">
                       <Image
                         src={item.image}
                         fill
@@ -120,7 +122,7 @@ const PricingModal = () => {
                   <CloseOutlined className="cursor-pointer" />
                 </div>
               </div>
-            ))} */}
+            ))}
         </div>
       </Form>
     </Modal>
