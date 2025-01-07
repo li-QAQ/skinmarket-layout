@@ -1,5 +1,5 @@
-import FilterTag from "@/components/FIlterTag";
-import MyCard from "@/components/MyCard";
+import FilterTag from '@/components/FIlterTag';
+import MyCard from '@/components/MyCard';
 
 export default function Home() {
   return (
@@ -10,10 +10,10 @@ export default function Home() {
       <div
         className="overflow-auto w-full"
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-          gap: "16px",
-          scrollbarWidth: "none",
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+          gap: '16px',
+          scrollbarWidth: 'none',
         }}
       >
         {Array.from({ length: 40 }).map((_, index) => {
@@ -21,7 +21,7 @@ export default function Home() {
             <MyCard
               key={index}
               image={{
-                src: "/images/aug.png",
+                src: '/images/aug.png',
                 width: 140,
                 height: 140,
               }}

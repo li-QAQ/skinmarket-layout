@@ -1,75 +1,92 @@
 'use client';
-import BagCard from '@/app/bag/BagCard';
-import BagBatch from './Batch';
-import useBag from '@/store/bagStore';
-import { useEffect } from 'react';
 
-const Bag = () => {
-  const selectedItemIds = useBag((state) => state.selectedItemIds);
-  const setSelectedItemIds = useBag((state) => state.setSelectedItemIds);
-  const items = useBag((state) => state.items);
-  const setItems = useBag((state) => state.setItems);
+import BaseCard from '@/components/BaseCard';
+import { useEffect, useState } from 'react';
+
+interface MCardProps {
+  name: string;
+  price: number;
+  selected: boolean;
+  onChange?: (selected: boolean) => void;
+}
+const MCard = (props: MCardProps) => {
+  const [selected, setSelected] = useState(false);
 
   useEffect(() => {
-    setItems([
-      {
-        id: 1,
-        selected: false,
-        name: '點數',
-        price: 100,
-        image: '/images/aug.png',
-      },
-      {
-        id: 2,
-        selected: false,
-        name: '點數',
-        price: 200,
-        image: '/images/aug.png',
-      },
-      {
-        id: 3,
-        selected: false,
-        name: '點數',
-        price: 300,
-        image: '/images/aug.png',
-      },
-    ]);
-  }, []);
+    setSelected(props.selected);
+  }, [props.selected]);
+
+  useEffect(() => {
+    props.onChange?.(selected);
+  }, [selected]);
+
+  return (
+    <BaseCard
+      onClick={() => setSelected(!selected)}
+      style={{
+        backgroundColor: selected ? 'var(--primary)' : 'var(--secondary)',
+      }}
+      className="hover:border-[var(--primary)] hover:border-2 cursor-pointer"
+      image="/images/aug.png"
+      children={
+        <>
+          <div className="text-xs">{props.name}</div>
+          <div>{props.price}</div>
+        </>
+      }
+    />
+  );
+};
+
+const Bag = () => {
+  const data = [
+    {
+      id: 1,
+      selected: false,
+      name: '點數100',
+      price: 100,
+      image: '/images/aug.png',
+    },
+    {
+      id: 2,
+      selected: false,
+      name: '點數300',
+      price: 300,
+      image: '/images/aug.png',
+    },
+    {
+      id: 3,
+      selected: false,
+      name: '點數500',
+      price: 500,
+      image: '/images/aug.png',
+    },
+  ];
+  const [items, setItems] = useState(data);
+
+  useEffect(() => {
+    console.log(items, 'items');
+  }, [items]);
 
   return (
     <div className="w-full h-full flex">
-      <BagBatch />
-
       <div
-        className="overflow-auto w-full"
+        className="grid w-full h-full gap-4 overflow-auto"
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-          gap: '16px',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
           scrollbarWidth: 'none',
         }}
       >
         {items.map((item, index) => (
-          <BagCard
+          <MCard
             key={index}
-            selected={
-              selectedItemIds.length > 0 && selectedItemIds.includes(item.id)
-            }
             name={item.name}
             price={item.price}
-            onSelect={(select) => {
-              if (select && !selectedItemIds.includes(item.id)) {
-                setSelectedItemIds([...selectedItemIds, item.id]);
-              } else if (!select && selectedItemIds.includes(item.id)) {
-                setSelectedItemIds(
-                  selectedItemIds.filter((id) => id !== item.id),
-                );
-              }
-            }}
-            image={{
-              src: item.image,
-              width: 140,
-              height: 140,
+            selected={item.selected}
+            onChange={(selected) => {
+              const newItems = [...items];
+              newItems[index].selected = selected;
+              setItems(newItems);
             }}
           />
         ))}

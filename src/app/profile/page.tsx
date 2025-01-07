@@ -1,10 +1,10 @@
-"use client";
-import { Avatar, Button, RadioChangeEvent, Tabs } from "antd";
-import { useState } from "react";
-import KYCModal from "./kyc";
+'use client';
+import { Avatar, Button, RadioChangeEvent, Tabs } from 'antd';
+import { useState } from 'react';
+import KYCModal from './kyc';
 
 const Profile = () => {
-  const [tabPosition, setTabPosition] = useState("left");
+  const [tabPosition, setTabPosition] = useState('left');
   const [isOpenKYC, setIsOpenKYC] = useState(false);
 
   const changeTabPosition = (e: RadioChangeEvent) => {
@@ -13,8 +13,8 @@ const Profile = () => {
 
   const items = [
     {
-      label: "我的點數",
-      key: "1",
+      label: '我的點數',
+      key: '1',
       children: (
         <div className="space-y-4">
           <div>我的點數</div>
@@ -32,8 +32,8 @@ const Profile = () => {
       ),
     },
     {
-      label: "個人資料",
-      key: "2",
+      label: '個人資料',
+      key: '2',
       children: (
         <div className="space-y-4">
           <div>賬戶信息</div>
@@ -66,19 +66,19 @@ const Profile = () => {
       ),
     },
     {
-      label: "消息中心",
-      key: "3",
-      children: "",
+      label: '消息中心',
+      key: '3',
+      children: '',
     },
     {
-      label: "幫助中心",
-      key: "4",
-      children: "",
+      label: '幫助中心',
+      key: '4',
+      children: '',
     },
     {
-      label: "聯繫客服",
-      key: "5",
-      children: "",
+      label: '聯繫客服',
+      key: '5',
+      children: '',
     },
   ];
 
