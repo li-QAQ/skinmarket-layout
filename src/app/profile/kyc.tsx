@@ -101,16 +101,7 @@ const KYCModal = (props: KYCModalProps) => {
           </Upload>
         </Form.Item>
 
-        <Form.Item
-          label="居住地址"
-          name="address"
-          rules={[
-            {
-              required: true,
-              message: '請輸入',
-            },
-          ]}
-        >
+        <Form.Item label="居住地址" name="address">
           <Input />
         </Form.Item>
 

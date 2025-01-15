@@ -8,23 +8,38 @@ import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 
 const LayoutMenu = () => {
   const pathname = usePathname();
+  const firstPath = pathname.split('/')[1];
   const router = useRouter();
   const itmes = [
     {
+      label: '點數交易',
+      key: 'points',
+      path: '/points',
+    },
+    {
       label: '市場',
-      path: '/',
+      key: 'market',
+      path: '/market',
     },
     {
       label: '背包',
+      key: 'bag',
       path: '/bag',
     },
     {
       label: '出售管理',
+      key: 'sell',
       path: '/sell',
     },
     {
-      label: '訂單管理',
-      path: '/order',
+      label: '購買記錄',
+      key: 'buy',
+      path: '/buy',
+    },
+    {
+      label: '確認交易',
+      key: 'confirm',
+      path: '/confirm',
     },
   ];
   const [isOpenLogin, setIsOpenLogin] = useState(false);
@@ -74,7 +89,7 @@ const LayoutMenu = () => {
                 onClick={() => hanldleClick(item.path)}
                 style={{
                   borderBottom:
-                    pathname === item.path ? '2px solid white' : 'none',
+                    firstPath === item.key ? '2px solid white' : 'none',
                 }}
               >
                 <div>{item.label}</div>

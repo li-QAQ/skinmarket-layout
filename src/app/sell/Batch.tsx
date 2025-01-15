@@ -1,8 +1,8 @@
-import useBag from '@/store/bagStore';
 import { Button, Checkbox, CheckboxProps } from 'antd';
 import PricingModal from './Pricing';
+import useSell from '@/store/sell';
 
-const BagBatch = () => {
+const SellBatch = () => {
   const {
     items,
     selectedItemIds,
@@ -11,7 +11,7 @@ const BagBatch = () => {
     getAllItemCount,
     getSelectedItmeTotalPrice,
     setIsOpenPricingModal,
-  } = useBag();
+  } = useSell();
 
   const AllIds = items.map((item) => item.id);
 
@@ -52,11 +52,14 @@ const BagBatch = () => {
           {`${getSelectedCount()}/${getAllItemCount()}`}
         </div>
         <div className="space-x-4">
-          <span className="font-bold">
+          <span className="font-bold text-xl">
             估值: ${getSelectedItmeTotalPrice()}
           </span>
           <Button type="primary" className="w-60" onClick={openPricingModal}>
-            上架
+            改價
+          </Button>
+          <Button type="primary" className="w-60">
+            下架
           </Button>
         </div>
       </div>
@@ -64,4 +67,4 @@ const BagBatch = () => {
   );
 };
 
-export default BagBatch;
+export default SellBatch;

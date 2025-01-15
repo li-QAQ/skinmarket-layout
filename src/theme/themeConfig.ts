@@ -7,6 +7,14 @@ const myTheme: ThemeConfig = {
     colorTextBase: '#ffffff',
     colorBgBase: '#000000',
   },
+
+  components: {
+    Segmented: {
+      itemSelectedBg: '#c9a86b',
+      trackBg: '#282828',
+    },
+  },
+
   algorithm: theme.darkAlgorithm,
 };
 
