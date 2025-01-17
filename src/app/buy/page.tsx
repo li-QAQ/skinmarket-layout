@@ -1,7 +1,7 @@
 'use client';
 
 import { Table } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
 const SellHistory = () => {

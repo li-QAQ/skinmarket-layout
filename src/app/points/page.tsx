@@ -1,48 +1,69 @@
+'use client';
 import { Button, Table } from 'antd';
 
 const Points = () => {
   const items = [
     {
       name: '小明',
-      price: 1.01,
-      count: 12321,
+      price: <div>1.09 NT</div>,
+      count: (
+        <div>
+          <div>4,450.09 NT</div>
+          <div>$300.00 - $2,500.00</div>
+        </div>
+      ),
       payMenthod: 'Bank',
     },
     {
       name: '小紅',
-      price: 1.02,
-      count: 234231,
+      price: <div>1.02 NT</div>,
+      count: (
+        <div>
+          <div>4,450.09 NT</div>
+          <div>$300.00 - $2,500.00</div>
+        </div>
+      ),
       payMenthod: 'Bank',
     },
   ];
 
   return (
-    <div>
-      <div className="flex flex-wrap w-full space-y-4 px-80">
-        <div className="flex  items-center">名稱</div>
-        <div className="flex ">價格</div>
-        <div className="flex ">數量</div>
-        <div className="flex ">支付方式</div>
-        <div className="flex "></div>
-      </div>
-
-      {items.map((item, index) => (
-        <div
-          key={index}
-          className="flex flex-wrap w-full space-y-4 px-80 "
-          style={{
-            background: 'var(--secondary)',
-          }}
-        >
-          <div className="flex  items-end">{item.name}</div>
-          <div className="flex ">{item.price}</div>
-          <div className="flex ">{item.count}</div>
-          <div className="flex ">{item.payMenthod}</div>
-          <div className="flex ">
-            <Button type="primary">確認</Button>
-          </div>
-        </div>
-      ))}
+    <div className="max-w-[1200px] mx-auto">
+      <Table
+        rowKey="name"
+        size="large"
+        columns={[
+          {
+            title: '賣家',
+            dataIndex: 'name',
+            key: 'name',
+          },
+          {
+            title: '價格',
+            dataIndex: 'price',
+            key: 'price',
+          },
+          {
+            title: '數量/訂單限額',
+            dataIndex: 'count',
+            key: 'count',
+          },
+          {
+            title: '支付方式',
+            dataIndex: 'payMenthod',
+            key: 'payMenthod',
+          },
+          {
+            title: '交易',
+            key: 'action',
+            render: (text, record) => <Button type="primary">購買</Button>,
+          },
+        ]}
+        dataSource={items}
+        pagination={{
+          position: ['bottomCenter'],
+        }}
+      />
     </div>
   );
 };

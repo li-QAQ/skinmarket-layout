@@ -1,7 +1,5 @@
 'use client';
 
-import useAuthStore from '@/store/auth';
-
 import { Button, Table } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';

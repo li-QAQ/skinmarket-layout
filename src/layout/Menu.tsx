@@ -16,31 +16,31 @@ const LayoutMenu = () => {
       key: 'points',
       path: '/points',
     },
-    {
-      label: '市場',
-      key: 'market',
-      path: '/market',
-    },
-    {
-      label: '背包',
-      key: 'bag',
-      path: '/bag',
-    },
-    {
-      label: '出售管理',
-      key: 'sell',
-      path: '/sell',
-    },
-    {
-      label: '購買記錄',
-      key: 'buy',
-      path: '/buy',
-    },
-    {
-      label: '確認交易',
-      key: 'confirm',
-      path: '/confirm',
-    },
+    // {
+    //   label: '市場',
+    //   key: 'market',
+    //   path: '/market',
+    // },
+    // {
+    //   label: '背包',
+    //   key: 'bag',
+    //   path: '/bag',
+    // },
+    // {
+    //   label: '出售管理',
+    //   key: 'sell',
+    //   path: '/sell',
+    // },
+    // {
+    //   label: '購買記錄',
+    //   key: 'buy',
+    //   path: '/buy',
+    // },
+    // {
+    //   label: '確認交易',
+    //   key: 'confirm',
+    //   path: '/confirm',
+    // },
   ];
   const [isOpenLogin, setIsOpenLogin] = useState(false);
   const { isLogin, setLogin } = useAuthStore();
@@ -75,7 +75,7 @@ const LayoutMenu = () => {
   ];
 
   return (
-    <div className="h-full w-full px-8 flex items-center bg-[var(--secondary)] space-x-4">
+    <div className="h-full w-full px-8 flex items-center space-x-4">
       <div>
         <div className="w-52 font-bold text-center">LOGO</div>
       </div>
