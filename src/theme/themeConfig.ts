@@ -4,7 +4,7 @@ const myTheme: ThemeConfig = {
   token: {
     fontSize: 14,
     colorPrimary: '#c9a86b',
-    colorTextBase: 'white',
+    colorTextBase: '#ffffff',
     colorBgBase: '#1c1c1e',
   },
 

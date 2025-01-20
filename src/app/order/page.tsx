@@ -1,5 +1,5 @@
 'use client';
-import { Segmented, Table, Tabs, TabsProps } from 'antd';
+import { Button, Segmented, Table, Tabs, TabsProps } from 'antd';
 
 const Order = () => {
   const onChange = (key: string) => {
@@ -62,7 +62,7 @@ const Order = () => {
       render: (status: number) => {
         switch (status) {
           case 0:
-            return '未付款';
+            return <Button type="primary">確認付款</Button>;
           case 1:
             return '已付款';
           case 2:
