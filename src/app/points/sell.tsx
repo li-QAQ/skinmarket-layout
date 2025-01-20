@@ -1,7 +1,7 @@
 import { numberCarry } from '@/ultis';
 import { Form, InputNumber, Modal, Select } from 'antd';
 
-interface BuyModalProps {
+interface SellModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   data: {
@@ -9,9 +9,10 @@ interface BuyModalProps {
   };
 }
 
-const BuyModal = (props: BuyModalProps) => {
+const SellModal = (props: SellModalProps) => {
   const [form] = Form.useForm();
   const rate = props.data.price + 0.01;
+
   const options = [
     {
       label: '銀行支付',
@@ -33,7 +34,7 @@ const BuyModal = (props: BuyModalProps) => {
       open={props.open}
       title={
         <div className="flex flex-col">
-          <div>價格 1.09 NT</div>
+          <div>價格 {props.data.price}</div>
           <div className="text-sm text-gray-400">平台手續費 - 1%</div>
         </div>
       }
@@ -48,7 +49,7 @@ const BuyModal = (props: BuyModalProps) => {
     >
       <div className="mt-4">
         <Form form={form} layout="horizontal">
-          <Form.Item label="支付" name="pay">
+          <Form.Item label="出售" name="pay">
             <InputNumber
               onChange={(value) => {
                 if (value) {
@@ -101,4 +102,4 @@ const BuyModal = (props: BuyModalProps) => {
   );
 };
 
-export default BuyModal;
+export default SellModal;

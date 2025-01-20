@@ -16,6 +16,11 @@ const LayoutMenu = () => {
       key: 'points',
       path: '/points',
     },
+    {
+      label: '訂單管理',
+      key: 'order',
+      path: '/order',
+    },
     // {
     //   label: '市場',
     //   key: 'market',
@@ -75,7 +80,7 @@ const LayoutMenu = () => {
   ];
 
   return (
-    <div className="h-full w-full px-8 flex items-center space-x-4">
+    <div className="h-full w-full flex items-center space-x-4">
       <div>
         <div className="w-52 font-bold text-center">LOGO</div>
       </div>

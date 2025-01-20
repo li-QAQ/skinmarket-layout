@@ -33,7 +33,7 @@ const LayoutMenuMobile = () => {
   };
 
   return (
-    <div className="h-full w-full px-8 flex items-center bg-[var(--secondary)] justify-between">
+    <div className="h-full w-full flex items-center bg-[var(--secondary)] justify-between">
       <MenuOutlined className="text-2xl" />
       <LoginModal
         open={isOpenLogin}
