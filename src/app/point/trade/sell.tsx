@@ -1,13 +1,18 @@
 import { numberCarry } from '@/ultis';
-import { Form, Input, InputNumber, Modal, Segmented, Select } from 'antd';
+import { Form, InputNumber, Modal, Select } from 'antd';
 
-interface PublishModalProps {
+interface SellModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  data: {
+    price: number;
+  };
 }
 
-const PublishModal = (props: PublishModalProps) => {
+const SellModal = (props: SellModalProps) => {
   const [form] = Form.useForm();
+  const rate = props.data.price + 0.01;
+
   const options = [
     {
       label: '銀行支付',
@@ -22,7 +27,6 @@ const PublishModal = (props: PublishModalProps) => {
       value: 'JKOPay',
     },
   ];
-  const rate = Form.useWatch('price', form) + 0.01;
 
   return (
     <Modal
@@ -30,7 +34,7 @@ const PublishModal = (props: PublishModalProps) => {
       open={props.open}
       title={
         <div className="flex flex-col">
-          <div>發布購買/求購</div>
+          <div>價格 {props.data.price}</div>
           <div className="text-sm text-gray-400">平台手續費 - 1%</div>
         </div>
       }
@@ -44,35 +48,17 @@ const PublishModal = (props: PublishModalProps) => {
       }}
     >
       <div className="mt-4">
-        <Form form={form} layout="vertical">
-          <Segmented<string>
-            style={{
-              marginBottom: '16px',
-            }}
-            options={['購買', '求購']}
-            defaultValue="購買"
-            onChange={(value) => {
-              console.log(value);
-            }}
-          />
-          <Form.Item label="定價(NT/點數)" name="price">
-            <InputNumber
-              style={{
-                width: '100%',
-              }}
-              min={0}
-            />
-          </Form.Item>
-          <Form.Item label="總額(NT)" name="amount">
+        <Form form={form} layout="horizontal">
+          <Form.Item label="出售金額" name="pay">
             <InputNumber
               onChange={(value) => {
                 if (value) {
                   form.setFieldsValue({
-                    income: numberCarry(value / rate, 2),
+                    receive: numberCarry(value / rate, 2),
                   });
                 } else {
                   form.setFieldsValue({
-                    income: '',
+                    receive: '',
                   });
                 }
               }}
@@ -82,16 +68,16 @@ const PublishModal = (props: PublishModalProps) => {
               min={0}
             />
           </Form.Item>
-          <Form.Item label="點數" name="income">
+          <Form.Item label="收到點數" name="receive">
             <InputNumber
               onChange={(value) => {
                 if (value) {
                   form.setFieldsValue({
-                    amount: numberCarry(value * rate, 2),
+                    pay: numberCarry(value * rate, 2),
                   });
                 } else {
                   form.setFieldsValue({
-                    amount: '',
+                    pay: '',
                   });
                 }
               }}
@@ -101,33 +87,8 @@ const PublishModal = (props: PublishModalProps) => {
               min={0}
             />
           </Form.Item>
-
-          <Form.Item label="訂單限額" name="pay">
-            <div className="flex space-x-4">
-              <Form.Item noStyle name={['pay', 'min']}>
-                <InputNumber
-                  style={{
-                    width: '100%',
-                  }}
-                  min={0}
-                />
-              </Form.Item>
-
-              <span>~</span>
-
-              <Form.Item noStyle name={['pay', 'max']}>
-                <InputNumber
-                  style={{
-                    width: '100%',
-                  }}
-                  min={0}
-                />
-              </Form.Item>
-            </div>
-          </Form.Item>
-
           <Form.Item label="支付方式" name="payMenthod">
-            <Select allowClear mode="multiple">
+            <Select allowClear>
               {options.map((option) => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}
@@ -135,14 +96,10 @@ const PublishModal = (props: PublishModalProps) => {
               ))}
             </Select>
           </Form.Item>
-
-          <Form.Item label="備註" name="note">
-            <Input.TextArea />
-          </Form.Item>
         </Form>
       </div>
     </Modal>
   );
 };
 
-export default PublishModal;
+export default SellModal;

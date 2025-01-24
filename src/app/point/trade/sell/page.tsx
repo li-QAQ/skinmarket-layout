@@ -1,8 +1,9 @@
 'use client';
 import { Button, Table } from 'antd';
-import SellModal from '../sell';
+
 import { useState } from 'react';
 import { numberCarry } from '@/ultis';
+import SellModal from '../sell';
 
 const Points = () => {
   const items = [
@@ -65,6 +66,7 @@ const Points = () => {
           {
             title: '交易',
             key: 'action',
+            width: 200,
             render: (_: any, record: any) => (
               <Button
                 type="primary"

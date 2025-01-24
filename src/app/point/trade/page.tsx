@@ -1,10 +1,14 @@
 'use client';
-import { Button, Table } from 'antd';
-import BuyModal from './buy';
-import { useState } from 'react';
 import { numberCarry } from '@/ultis';
+import { Button, Table } from 'antd';
+import { useState } from 'react';
+import BuyModal from './buy';
 
-const Points = () => {
+const Page = () => {
+  const [data, setData] = useState({
+    price: 1,
+  });
+  const [isOpen, setIsOpen] = useState(false);
   const items = [
     {
       name: '小明',
@@ -40,13 +44,9 @@ const Points = () => {
       payMenthod: 'Bank',
     },
   ];
-  const [isOpen, setIsOpen] = useState(false);
-  const [data, setData] = useState({
-    price: 1,
-  });
 
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <>
       <BuyModal open={isOpen} setOpen={setIsOpen} data={data} />
       <Table
         rowKey="name"
@@ -76,17 +76,35 @@ const Points = () => {
           {
             title: '交易',
             key: 'action',
-            render: (_: any, record: any) => (
-              <Button
-                type="primary"
-                onClick={() => {
-                  setIsOpen(true);
-                  setData(record);
-                }}
-              >
-                購買
-              </Button>
-            ),
+            width: 200,
+            render: (_: any, record: any) => {
+              if (record.name == '小紅') {
+                return (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setIsOpen(true);
+                      setData(record);
+                    }}
+                  >
+                    購買
+                  </Button>
+                );
+              } else {
+                return (
+                  <Button
+                    type="primary"
+                    disabled
+                    onClick={() => {
+                      setIsOpen(true);
+                      setData(record);
+                    }}
+                  >
+                    需完成店家認證
+                  </Button>
+                );
+              }
+            },
           },
         ]}
         dataSource={items}
@@ -94,8 +112,8 @@ const Points = () => {
           position: ['bottomCenter'],
         }}
       />
-    </div>
+    </>
   );
 };
 
-export default Points;
+export default Page;

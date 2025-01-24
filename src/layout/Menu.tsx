@@ -13,13 +13,8 @@ const LayoutMenu = () => {
   const itmes = [
     {
       label: '點數交易',
-      key: 'points',
-      path: '/points',
-    },
-    {
-      label: '訂單管理',
-      key: 'order',
-      path: '/order',
+      key: 'point',
+      path: '/point/trade',
     },
     // {
     //   label: '市場',

@@ -2,18 +2,17 @@
 import { Button, Form, InputNumber, Segmented, Select, Space } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
-import PublishModal from './publish';
+import BuyPublishModal from './buyPublish';
+import SellPublishModal from './sellPublish';
 
 const { Item } = Form;
-
-interface PointsProps {
+interface TradeProps {
   children?: React.ReactNode;
 }
-const Points = (props: PointsProps) => {
+const Trade = (props: TradeProps) => {
   const pahtname = usePathname();
   const router = useRouter();
   const [pays, setPays] = useState<string[]>(['All']);
-
   const handleChange = (value: string[]) => {
     const isAll = value.includes('All');
 
@@ -23,13 +22,13 @@ const Points = (props: PointsProps) => {
       setPays(value);
     }
   };
-
   const handleClick = (pay: string) => {
     if (pay === 'All') {
       setPays(['All']);
     }
   };
-  const [isOpen, setIsOpen] = useState(false);
+  const [openBuy, setOpenBuy] = useState(false);
+  const [openSell, setOpenSell] = useState(false);
   const options = [
     {
       label: '所有支付方式',
@@ -48,39 +47,55 @@ const Points = (props: PointsProps) => {
       value: 'JKOPay',
     },
   ];
-
   return (
-    <div className="max-w-[1200px] mx-auto my-4 space-y-4">
+    <div className="space-y-4">
       <div className="flex justify-between items-center">
         <Segmented
-          style={{
-            padding: '4px 8px',
-          }}
-          size="large"
           value={pahtname}
           onChange={(value) => router.push(value)}
           options={[
             {
               label: '購買',
-              value: '/points',
+              value: '/point/trade',
             },
             {
               label: '出售',
-              value: '/points/sell',
+              value: '/point/trade/sell',
             },
           ]}
         />
 
-        <PublishModal open={isOpen} setOpen={setIsOpen} />
+        <BuyPublishModal open={openBuy} setOpen={setOpenBuy} />
+        <SellPublishModal open={openSell} setOpen={setOpenSell} />
 
-        <Button
-          type="primary"
-          onClick={() => {
-            setIsOpen(true);
-          }}
-        >
-          發布
-        </Button>
+        <div className="space-x-4">
+          <Button
+            disabled
+            type="primary"
+            onClick={() => {
+              setOpenBuy(true);
+            }}
+          >
+            購買點數(需完成店家認證)
+          </Button>
+          {/* <Button
+            type="primary"
+            onClick={() => {
+              setOpenBuy(true);
+            }}
+          >
+            購買點數
+          </Button> */}
+          <Button
+            type="primary"
+            danger
+            onClick={() => {
+              setOpenSell(true);
+            }}
+          >
+            出售點數
+          </Button>
+        </div>
       </div>
 
       <Form layout="horizontal" className="flex space-x-4">
@@ -106,4 +121,4 @@ const Points = (props: PointsProps) => {
   );
 };
 
-export default Points;
+export default Trade;
