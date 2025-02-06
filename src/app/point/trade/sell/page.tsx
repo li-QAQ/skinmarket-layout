@@ -67,18 +67,34 @@ const Points = () => {
             title: '交易',
             key: 'action',
             width: 200,
-            render: (_: any, record: any) => (
-              <Button
-                type="primary"
-                danger
-                onClick={() => {
-                  setIsOpen(true);
-                  setData(record);
-                }}
-              >
-                出售
-              </Button>
-            ),
+            render: (_: any, record: any) => {
+              if (record.name == '小明') {
+                return (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setIsOpen(true);
+                      setData(record);
+                    }}
+                  >
+                    請先完成KYC驗證
+                  </Button>
+                );
+              } else {
+                return (
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={() => {
+                      setIsOpen(true);
+                      setData(record);
+                    }}
+                  >
+                    出售
+                  </Button>
+                );
+              }
+            },
           },
         ]}
         dataSource={items}
