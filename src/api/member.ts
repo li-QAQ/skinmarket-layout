@@ -9,6 +9,13 @@ const get_info = () => {
 };
 
 // 取得點數訂單
+const get_point_acquisition = () => {
+  const MERCHANT_ID = getMerchantId();
+  const MEMBER_ID = getMemberId();
+  return apiClient.get(`/${MERCHANT_ID}/member/${MEMBER_ID}/point/acquisition`);
+};
+
+// 取得點數訂單
 const get_point_order = () => {
   const MERCHANT_ID = getMerchantId();
   const MEMBER_ID = getMemberId();
@@ -28,8 +35,8 @@ const get_point_order_confirm_buyer = () => {
 const get_point_order_confirm_seller = () => {
   const MERCHANT_ID = getMerchantId();
   const MEMBER_ID = getMemberId();
-  return apiClient.post(
-    `/${MERCHANT_ID}/member/${MEMBER_ID}/point/order/confirm/as-seller`,
+  return apiClient.get(
+    `/${MERCHANT_ID}/member/${MEMBER_ID}/point/confirm/as-seller`,
   );
 };
 
@@ -37,7 +44,7 @@ const get_point_order_confirm_seller = () => {
 const get_point_order_confirm_failed_buyer = () => {
   const MERCHANT_ID = getMerchantId();
   const MEMBER_ID = getMemberId();
-  return apiClient.post(
+  return apiClient.get(
     `/${MERCHANT_ID}/member/${MEMBER_ID}/point/order/confirm/failed/as-buyer`,
   );
 };
@@ -46,7 +53,7 @@ const get_point_order_confirm_failed_buyer = () => {
 const get_point_order_confirm_failed_seller = () => {
   const MERCHANT_ID = getMerchantId();
   const MEMBER_ID = getMemberId();
-  return apiClient.post(
+  return apiClient.get(
     `/${MERCHANT_ID}/member/${MEMBER_ID}/point/order/confirm/failed/as-seller`,
   );
 };
@@ -93,6 +100,7 @@ const get_point_order_history = () => {
 
 const Member = {
   get_info,
+  get_point_acquisition,
   get_point_order,
   get_point_order_confirm_buyer,
   get_point_order_confirm_seller,

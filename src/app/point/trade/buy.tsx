@@ -1,31 +1,55 @@
-import { numberCarry } from '@/ultis/common';
+import Api from '@/api';
+import useMessageStore from '@/store/message';
+import usePointStore from '@/store/point';
 import { Form, InputNumber, Modal, Select } from 'antd';
 
 interface BuyModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   data: {
+    id: number;
     price: number;
   };
 }
 
 const BuyModal = (props: BuyModalProps) => {
   const [form] = Form.useForm();
-  const rate = props.data.price + 0.01;
+  const setData = useMessageStore((state) => state.setData);
+  const set_acquisition_order = usePointStore(
+    (state) => state.set_acquisition_order,
+  );
+
   const options = [
     {
       label: '銀行支付',
       value: 'Bank',
     },
-    {
-      label: 'Line Pay',
-      value: 'LinePay',
-    },
-    {
-      label: '街口支付',
-      value: 'JKOPay',
-    },
   ];
+
+  const onFinish = (values: {
+    quantity: number;
+    amount: number;
+    payMenthod: string;
+  }) => {
+    Api.Market.post_point_acquisition_sell({
+      point_acquisition_id: props.data.id,
+      quantity: values.quantity,
+    }).then(async (res) => {
+      console.log(res, 'res');
+
+      setData({
+        show: true,
+        content: '您的訂單已成功發佈，請耐心等待買家購買。',
+        type: 'success',
+      });
+
+      await Api.Market.get_point_acquisition().then((res) => {
+        set_acquisition_order(res.data);
+      });
+
+      props.setOpen(false);
+    });
+  };
 
   return (
     <Modal
@@ -33,8 +57,8 @@ const BuyModal = (props: BuyModalProps) => {
       open={props.open}
       title={
         <div className="flex flex-col">
-          <div>價格 1.09 NT</div>
-          <div className="text-sm text-gray-400">平台手續費 - 1%</div>
+          <div>價格 {props.data.price}</div>
+          <div className="text-sm text-gray-400">平台手續費 - 0%</div>
         </div>
       }
       cancelText="取消"
@@ -43,21 +67,18 @@ const BuyModal = (props: BuyModalProps) => {
         props.setOpen(false);
       }}
       onOk={() => {
-        props.setOpen(false);
+        form.submit();
       }}
     >
       <div className="mt-4">
-        <Form form={form} layout="horizontal">
-          <Form.Item label="支付金額" name="pay">
+        <Form form={form} onFinish={onFinish} layout="horizontal">
+          <Form.Item label="購買點數" name="quantity">
             <InputNumber
               onChange={(value) => {
-                if (value) {
+                if (value && props.data.price) {
+                  const result: number = value * props.data.price;
                   form.setFieldsValue({
-                    receive: numberCarry(value / rate, 2),
-                  });
-                } else {
-                  form.setFieldsValue({
-                    receive: '',
+                    amount: Math.floor(result),
                   });
                 }
               }}
@@ -67,16 +88,13 @@ const BuyModal = (props: BuyModalProps) => {
               min={0}
             />
           </Form.Item>
-          <Form.Item label="收到點數" name="receive">
+          <Form.Item label="支付金額" name="amount">
             <InputNumber
               onChange={(value) => {
-                if (value) {
+                if (value && props.data.price) {
+                  const result: number = value / props.data.price;
                   form.setFieldsValue({
-                    pay: numberCarry(value * rate, 2),
-                  });
-                } else {
-                  form.setFieldsValue({
-                    pay: '',
+                    quantity: Math.floor(result),
                   });
                 }
               }}

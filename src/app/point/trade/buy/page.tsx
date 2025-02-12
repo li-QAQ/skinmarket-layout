@@ -7,7 +7,7 @@ import { numberCarry } from '@/ultis/common';
 import Api from '@/api';
 import usePointStore from '@/store/point';
 import useInfoStore from '@/store/info';
-import BuyModal from './buy';
+import SellModal from '../sell';
 
 const Page = () => {
   const [data, setData] = useState({
@@ -17,20 +17,19 @@ const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
   const member_id = useInfoStore((state) => state.member_id);
 
-  const acquisition_order = usePointStore((state) => state.acquisition_order);
-  const set_acquisition_order = usePointStore(
-    (state) => state.set_acquisition_order,
-  );
+  const point_order = usePointStore((state) => state.point_order);
+  const set_point_order = usePointStore((state) => state.set_point_order);
 
   useEffect(() => {
-    Api.Market.get_point_acquisition().then((res) => {
-      set_acquisition_order(res.data);
+    Api.Market.get_point_order().then((res) => {
+      set_point_order(res.data);
     });
   }, []);
 
   return (
     <>
-      <BuyModal open={isOpen} setOpen={setIsOpen} data={data} />
+      <SellModal open={isOpen} setOpen={setIsOpen} data={data} />
+
       <Table
         pagination={{
           pageSize: 9,
@@ -38,7 +37,7 @@ const Page = () => {
         rowKey="id"
         columns={[
           {
-            title: '買家',
+            title: '賣家',
             dataIndex: 'member_id',
             key: 'member_id',
           },
@@ -67,20 +66,19 @@ const Page = () => {
                 member_id !== record.member_id && (
                   <Button
                     type="primary"
-                    danger
                     onClick={() => {
                       setIsOpen(true);
                       setData(record);
                     }}
                   >
-                    出售
+                    購買
                   </Button>
                 )
               );
             },
           },
         ]}
-        dataSource={acquisition_order}
+        dataSource={point_order}
       />
     </>
   );

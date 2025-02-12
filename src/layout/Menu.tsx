@@ -9,7 +9,7 @@ const LayoutMenu = () => {
   const pathname = usePathname();
   const firstPath = pathname.split('/')[1];
   const router = useRouter();
-  const { point } = useInfoStore();
+  const { point, member_id } = useInfoStore();
   const itmes = [
     {
       label: '點數交易',
@@ -87,9 +87,14 @@ const LayoutMenu = () => {
         })}
       </div>
       <div className="text-white flex items-center space-x-4">
-        <div className="relative flex  bg-[#ffffff10] p-2 rounded-md font-bold text-sm">
+        <div className="relative flex  bg-[#ffffff10] p-2 rounded-md font-bold">
           <span className="text-lg font-bold">{point}</span>
           <sup className="ml-1 text-xs text-gray-400">點數</sup>
+        </div>
+
+        <div className="relative flex  bg-[#ffffff10] p-2 rounded-md font-bold">
+          <span className="text-lg font-bold">{member_id}</span>
+          <sup className="ml-1 text-xs text-gray-400">用戶</sup>
         </div>
 
         <Dropdown menu={{ items: menuItems }} className="cursor-pointer ">

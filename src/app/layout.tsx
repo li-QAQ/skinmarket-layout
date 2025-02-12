@@ -5,7 +5,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ConfigProvider, Layout } from 'antd';
 import theme from '@/theme/themeConfig';
 import LayoutMenuMobile from '@/layout/LayoutMenuMobile';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import Api from '@/api';
 import { parseJwt } from '@/ultis/common';
@@ -19,8 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const token = useSearchParams().get('token');
-  const router = useRouter();
   const infoStore = useInfoStore();
+
+  Api.Member.get_info().then((res) => {
+    console.log(res.data.point, 'point');
+  });
 
   useEffect(() => {
     if (token) {
@@ -40,8 +43,6 @@ export default function RootLayout({
         infoStore.setPoint(res.data.point);
       });
     }
-
-    router.push('/point/trade');
   }, [token]);
   return (
     <html lang="en">

@@ -1,47 +1,46 @@
 'use client';
 
 import { Button, Table } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { numberCarry } from '@/ultis/common';
-
 import Api from '@/api';
 import usePointStore from '@/store/point';
-import useInfoStore from '@/store/info';
-import BuyModal from './buy';
+import useMessageStore from '@/store/message';
 
-const Page = () => {
-  const [data, setData] = useState({
-    id: 0,
-    price: 0,
-  });
-  const [isOpen, setIsOpen] = useState(false);
-  const member_id = useInfoStore((state) => state.member_id);
-
+const PointOrderBuy = () => {
   const acquisition_order = usePointStore((state) => state.acquisition_order);
+  const setMsg = useMessageStore((state) => state.setData);
   const set_acquisition_order = usePointStore(
     (state) => state.set_acquisition_order,
   );
 
+  const cancelOrder = (id: string) => {
+    Api.Market.del_point_acquisition({ point_acquisition_id: id }).then(
+      async () => {
+        await Api.Member.get_point_acquisition().then((res) => {
+          set_acquisition_order(res.data);
+        });
+
+        setMsg({
+          show: true,
+          content: '收購訂單取消成功',
+          type: 'success',
+        });
+      },
+    );
+  };
+
   useEffect(() => {
-    Api.Market.get_point_acquisition().then((res) => {
+    Api.Member.get_point_acquisition().then((res) => {
       set_acquisition_order(res.data);
     });
   }, []);
 
   return (
     <>
-      <BuyModal open={isOpen} setOpen={setIsOpen} data={data} />
       <Table
-        pagination={{
-          pageSize: 9,
-        }}
         rowKey="id"
         columns={[
-          {
-            title: '買家',
-            dataIndex: 'member_id',
-            key: 'member_id',
-          },
           {
             title: '價格(台幣/點數)',
             dataIndex: 'price',
@@ -59,31 +58,31 @@ const Page = () => {
             key: 'description',
           },
           {
-            title: '交易',
+            title: '操作',
             key: 'action',
             width: 200,
             render: (_: any, record: any) => {
               return (
-                member_id !== record.member_id && (
-                  <Button
-                    type="primary"
-                    danger
-                    onClick={() => {
-                      setIsOpen(true);
-                      setData(record);
-                    }}
-                  >
-                    出售
-                  </Button>
-                )
+                <Button
+                  type="primary"
+                  danger
+                  onClick={() => {
+                    cancelOrder(record.id);
+                  }}
+                >
+                  取消
+                </Button>
               );
             },
           },
         ]}
         dataSource={acquisition_order}
+        pagination={{
+          position: ['bottomCenter'],
+        }}
       />
     </>
   );
 };
 
-export default Page;
+export default PointOrderBuy;
