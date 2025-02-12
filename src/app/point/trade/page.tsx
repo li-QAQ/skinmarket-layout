@@ -1,8 +1,9 @@
 'use client';
-import { numberCarry } from '@/ultis';
+
 import { Button, Table } from 'antd';
 import { useState } from 'react';
 import BuyModal from './buy';
+import { numberCarry } from '@/ultis/common';
 
 const Page = () => {
   const [data, setData] = useState({

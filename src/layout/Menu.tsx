@@ -1,15 +1,15 @@
 'use client';
-import LoginModal from '@/components/Login';
-import useAuthStore from '@/store/auth';
-import { Avatar, Button, Dropdown } from 'antd';
+import { Avatar, Dropdown } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import useInfoStore from '@/store/info';
 
 const LayoutMenu = () => {
   const pathname = usePathname();
   const firstPath = pathname.split('/')[1];
   const router = useRouter();
+  const { point } = useInfoStore();
   const itmes = [
     {
       label: '點數交易',
@@ -42,15 +42,9 @@ const LayoutMenu = () => {
     //   path: '/confirm',
     // },
   ];
-  const [isOpenLogin, setIsOpenLogin] = useState(false);
-  const { isLogin, setLogin } = useAuthStore();
 
   const hanldleClick = (path: string) => {
     router.push(path);
-  };
-
-  const hanldleLogin = () => {
-    setLogin(false);
   };
 
   const menuItems: any = [
@@ -68,57 +62,39 @@ const LayoutMenu = () => {
       icon: <LogoutOutlined />,
       onClick: () => {
         localStorage.removeItem('token');
-        setLogin(false);
         router.push('/');
       },
     },
   ];
 
   return (
-    <div className="h-full w-full flex items-center space-x-4">
-      <div>
-        <div className="w-52 font-bold text-center">LOGO</div>
-      </div>
-      <div className="flex items-center justify-between w-full">
-        <div className="flex space-x-8 font-bold text-sm">
-          {itmes.map((item, index) => {
-            return (
-              <div
-                key={index}
-                className="cursor-pointer hover:text-white"
-                onClick={() => hanldleClick(item.path)}
-                style={{
-                  borderBottom:
-                    firstPath === item.key ? '2px solid white' : 'none',
-                }}
-              >
-                <div>{item.label}</div>
-              </div>
-            );
-          })}
-        </div>
-        <div>
-          <LoginModal
-            open={isOpenLogin}
-            setOpen={(open) => {
-              setIsOpenLogin(open);
-            }}
-          />
-
-          {isLogin ? (
-            <Dropdown menu={{ items: menuItems }} className="cursor-pointer ">
-              <Avatar size="large" icon={<UserOutlined />} />
-            </Dropdown>
-          ) : (
-            <Button
-              type="primary"
-              size="middle"
-              onClick={() => setIsOpenLogin(true)}
+    <div className="max-w-screen-xl flex items-center h-20 mx-auto justify-between">
+      <div className="flex space-x-8 font-bold text-sm ">
+        {itmes.map((item, index) => {
+          return (
+            <div
+              key={index}
+              className="cursor-pointer text-slate-50 hover:text-slate-400"
+              onClick={() => hanldleClick(item.path)}
+              style={{
+                borderBottom:
+                  firstPath === item.key ? '2px solid white' : 'none',
+              }}
             >
-              登入
-            </Button>
-          )}
+              <div>{item.label}</div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="text-white flex items-center space-x-4">
+        <div className="relative flex  bg-[#ffffff10] p-2 rounded-md font-bold text-sm">
+          <span className="text-lg font-bold">{point}</span>
+          <sup className="ml-1 text-xs text-gray-400">點數</sup>
         </div>
+
+        <Dropdown menu={{ items: menuItems }} className="cursor-pointer ">
+          <Avatar size="large" icon={<UserOutlined />} />
+        </Dropdown>
       </div>
     </div>
   );

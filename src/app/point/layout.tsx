@@ -17,7 +17,7 @@ const Point = (props: PointsProps) => {
   const items: TabsProps['items'] = [
     {
       key: '/point/trade',
-      label: 'C2C交易',
+      label: '點數交易',
     },
     {
       key: '/point/order',
@@ -26,7 +26,7 @@ const Point = (props: PointsProps) => {
   ];
 
   return (
-    <div className="max-w-[1200px] mx-auto my-4">
+    <div className="max-w-screen-xl mx-auto my-4">
       <Tabs defaultActiveKey={pathname} items={items} onChange={onChange} />
       {props.children}
     </div>

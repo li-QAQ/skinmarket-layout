@@ -2,8 +2,9 @@
 import { Button, Table } from 'antd';
 
 import { useState } from 'react';
-import { numberCarry } from '@/ultis';
+
 import SellModal from '../sell';
+import { numberCarry } from '@/ultis/common';
 
 const Points = () => {
   const items = [

@@ -8,7 +8,7 @@ interface RouteStore {
 
 const useRouteStore = create<RouteStore>()(
   persist(
-    (set, get) => ({
+    () => ({
       path: '/',
       key: 'home',
     }),

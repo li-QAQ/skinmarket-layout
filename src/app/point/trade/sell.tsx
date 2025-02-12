@@ -1,4 +1,4 @@
-import { numberCarry } from '@/ultis';
+import { numberCarry } from '@/ultis/common';
 import { Form, InputNumber, Modal, Select } from 'antd';
 
 interface SellModalProps {

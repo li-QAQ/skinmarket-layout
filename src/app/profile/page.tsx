@@ -83,8 +83,8 @@ const Profile = () => {
   ];
 
   return (
-    <div className="flex space-x-4 justify-center w-full">
-      <div className="bg-[var(--secondary)] w-full p-2 rounded-md">
+    <div className="max-w-screen-2xl flex items-center  mx-auto">
+      <div className="bg-[var(--secondary)] w-full rounded-md">
         <Tabs className="w-full font-bold" tabPosition="left" items={items} />
       </div>
     </div>

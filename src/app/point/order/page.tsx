@@ -1,5 +1,6 @@
 'use client';
-import { numberFormat } from '@/ultis';
+
+import { numberFormat } from '@/ultis/common';
 import { Button, Segmented, Table, Tabs, TabsProps } from 'antd';
 import { useState } from 'react';
 
@@ -162,7 +163,7 @@ const Order = () => {
   ];
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-4">
+    <div className="max-w-screen-xl mx-auto space-y-4">
       <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
       {status === 'in' ? (
         <Table
