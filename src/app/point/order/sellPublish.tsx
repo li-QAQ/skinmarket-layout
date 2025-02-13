@@ -14,17 +14,19 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
 
   const set_point_order = usePointStore((state) => state.set_point_order);
 
-  const onFinish = (values: {
+  const onFinish = async (values: {
     price: number;
     amount: number;
     quantity: number;
     description: string;
   }) => {
-    Api.Market.post_point_order({
-      price: values.price,
-      quantity: values.quantity,
-      description: values.description,
-    }).then(async () => {
+    try {
+      await Api.Market.post_point_order({
+        price: values.price,
+        quantity: values.quantity,
+        description: values.description,
+      });
+
       await Api.Member.get_point_order().then((res) => {
         set_point_order(res.data);
       });
@@ -36,7 +38,13 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
       });
 
       props.setOpen(false);
-    });
+    } catch (error: any) {
+      setData({
+        show: true,
+        content: error.data.message,
+        type: 'error',
+      });
+    }
   };
 
   return (
@@ -78,9 +86,11 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
               onChange={(value) => {
                 if (value) {
                   const result: number = form.getFieldValue('amount') / value;
-                  form.setFieldsValue({
-                    quantity: Math.floor(result),
-                  });
+                  if (result) {
+                    form.setFieldsValue({
+                      quantity: Math.floor(result),
+                    });
+                  }
                 }
               }}
             />

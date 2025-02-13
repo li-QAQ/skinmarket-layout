@@ -37,23 +37,28 @@ const Order = ({ children }: { children?: React.ReactNode }) => {
         onChange={onChange}
         tabBarExtraContent={
           <div className="space-x-4">
-            <Button
-              type="primary"
-              danger
-              onClick={() => {
-                setOpenSell(true);
-              }}
-            >
-              我要出售點數
-            </Button>
-            <Button
-              type="primary"
-              onClick={() => {
-                setOpenBuy(true);
-              }}
-            >
-              我要收購點數
-            </Button>
+            {pathname === '/point/order' && (
+              <Button
+                type="primary"
+                danger
+                onClick={() => {
+                  setOpenSell(true);
+                }}
+              >
+                我要出售點數
+              </Button>
+            )}
+
+            {pathname === '/point/order/buy' && (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setOpenBuy(true);
+                }}
+              >
+                我要收購點數
+              </Button>
+            )}
           </div>
         }
       />

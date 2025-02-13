@@ -21,10 +21,6 @@ export default function RootLayout({
   const token = useSearchParams().get('token');
   const infoStore = useInfoStore();
 
-  Api.Member.get_info().then((res) => {
-    console.log(res.data.point, 'point');
-  });
-
   useEffect(() => {
     if (token) {
       const jwt = parseJwt(token);
@@ -38,12 +34,15 @@ export default function RootLayout({
       localStorage.setItem('token', token);
       localStorage.setItem('member_id', memberId);
       localStorage.setItem('merchant_id', merchantId);
-
-      Api.Member.get_info().then((res) => {
-        infoStore.setPoint(res.data.point);
-      });
     }
   }, [token]);
+
+  useEffect(() => {
+    Api.Member.get_info().then((res) => {
+      infoStore.setPoint(res.data.point);
+    });
+  }, [infoStore.token]);
+
   return (
     <html lang="en">
       <body>

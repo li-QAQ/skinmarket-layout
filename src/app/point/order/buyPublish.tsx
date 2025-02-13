@@ -80,9 +80,11 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
               onChange={(value) => {
                 if (value) {
                   const result: number = form.getFieldValue('amount') / value;
-                  form.setFieldsValue({
-                    quantity: Math.floor(result),
-                  });
+                  if (result) {
+                    form.setFieldsValue({
+                      quantity: Math.floor(result),
+                    });
+                  }
                 }
               }}
             />
@@ -139,7 +141,6 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
               }}
             />
           </Form.Item>
-
           <Form.Item label="備註" name="description">
             <Input.TextArea />
           </Form.Item>

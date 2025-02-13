@@ -1,9 +1,11 @@
 'use client';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
   const router = useRouter();
-
-  router.push('/point/trade');
+  useEffect(() => {
+    router.push('/point/trade');
+  }, []);
   return <div>Home</div>;
 }

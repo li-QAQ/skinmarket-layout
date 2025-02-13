@@ -1,7 +1,6 @@
 'use client';
 import { Segmented } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 interface TradeProps {
   children?: React.ReactNode;
