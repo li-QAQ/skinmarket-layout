@@ -1,7 +1,9 @@
 import Api from '@/api';
+import useInfoStore from '@/store/info';
 import useMessageStore from '@/store/message';
 import usePointStore from '@/store/point';
-import { Form, InputNumber, Modal, Select } from 'antd';
+import { Form, InputNumber, message, Modal, Select } from 'antd';
+import { useEffect } from 'react';
 
 interface SellModalProps {
   open: boolean;
@@ -15,8 +17,10 @@ interface SellModalProps {
 const SellModal = (props: SellModalProps) => {
   const [form] = Form.useForm();
   const setData = useMessageStore((state) => state.setData);
-
-  const set_point_order = usePointStore((state) => state.set_point_order);
+  const set_acquisition_order = usePointStore(
+    (state) => state.set_acquisition_order,
+  );
+  const point = useInfoStore((state) => state.point);
 
   const options = [
     {
@@ -30,25 +34,36 @@ const SellModal = (props: SellModalProps) => {
     amount: number;
     payMenthod: string;
   }) => {
-    Api.Market.post_point_order_buy({
-      point_order_id: props.data.id,
+    Api.Market.post_point_acquisition_sell({
+      point_acquisition_id: props.data.id,
       quantity: values.quantity,
-    }).then(async (res) => {
-      console.log(res, 'res');
+    })
+      .then(async (res) => {
+        console.log(res, 'res');
 
-      setData({
-        show: true,
-        content: '您的訂單已成功發佈，請耐心等待賣家出售。',
-        type: 'success',
+        setData({
+          show: true,
+          content: '您的訂單已成功發佈，請耐心等待買家購買。',
+          type: 'success',
+        });
+
+        await Api.Market.get_point_acquisition().then((res) => {
+          set_acquisition_order(res.data);
+        });
+
+        props.setOpen(false);
+      })
+      .catch((err) => {
+        message.error(err.data.message);
       });
-
-      await Api.Market.get_point_order().then((res) => {
-        set_point_order(res.data);
-      });
-
-      props.setOpen(false);
-    });
   };
+
+  useEffect(() => {
+    form.setFieldsValue({
+      quantity: point,
+      amount: point * props.data.price,
+    });
+  }, [point, props.data.price]);
 
   return (
     <Modal

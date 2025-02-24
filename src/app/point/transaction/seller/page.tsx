@@ -6,7 +6,7 @@ import { Button, message, Popconfirm, Segmented, Table } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-const RequestPointTransactionPage = () => {
+const FailedPointTransactionPage = () => {
   const member_id = useInfoStore((state) => state.member_id);
   const [identity, setIdentity] = useState('request');
   const requestColumns: any = [
@@ -54,8 +54,8 @@ const RequestPointTransactionPage = () => {
       width: 250,
       render: (_: any, record: any) => {
         if (
-          record.reference_type === 'PointAcquisition' &&
-          record.buyer_id === member_id
+          record.reference_type === 'PointOrder' &&
+          record.seller_id === member_id
         ) {
           return (
             <div className="space-x-4">
@@ -63,7 +63,7 @@ const RequestPointTransactionPage = () => {
                 type="primary"
                 onClick={() => {
                   Api.Member.patch_point_confirm(record.id, 1).then(() => {
-                    Api.Member.get_point_confirm_buyer().then((res) => {
+                    Api.Member.get_point_confirm_seller().then((res) => {
                       setData(res.data);
 
                       message.success('確認訂單成功');
@@ -78,14 +78,15 @@ const RequestPointTransactionPage = () => {
                 danger
                 onClick={() => {
                   Api.Member.patch_point_confirm(record.id, 2).then(() => {
-                    Api.Member.get_point_confirm_buyer().then((res) => {
+                    Api.Member.get_point_confirm_seller().then((res) => {
                       setData(res.data);
-                      message.success('取消訂單成功');
+
+                      message.success('拒絕訂單成功');
                     });
                   });
                 }}
               >
-                取消訂單
+                拒絕訂單
               </Button>
             </div>
           );
@@ -102,15 +103,16 @@ const RequestPointTransactionPage = () => {
                 cancelText="否"
                 onConfirm={() => {
                   Api.Member.del_point_confirm(record.id).then(() => {
-                    Api.Member.get_point_confirm_buyer().then((res) => {
+                    Api.Member.get_point_confirm_seller().then((res) => {
                       setData(res.data);
+
                       message.success('取消請求成功');
                     });
                   });
                 }}
               >
                 <Button type="primary" danger>
-                  取消訂單
+                  撤回請求
                 </Button>
               </Popconfirm>
             </div>
@@ -133,15 +135,15 @@ const RequestPointTransactionPage = () => {
       title: '失敗原因',
       dataIndex: 'reference_type',
       render: (reference_type: string, record: any) => {
-        if (reference_type === 'PointOrder' && member_id === record.buyer_id) {
-          return '對方取消';
+        if (reference_type === 'PointOrder' && member_id === record.seller_id) {
+          return '被我取消';
         }
 
         if (
           reference_type === 'PointAcquisition' &&
-          member_id === record.buyer_id
+          member_id === record.seller_id
         ) {
-          return '被我取消';
+          return '對方取消';
         }
 
         return '未知原因';
@@ -191,11 +193,11 @@ const RequestPointTransactionPage = () => {
 
   useEffect(() => {
     if (identity === 'request') {
-      Api.Member.get_point_confirm_buyer().then((res) => {
+      Api.Member.get_point_confirm_seller().then((res) => {
         setData(res.data);
       });
     } else {
-      Api.Member.get_point_confirm_failed_buyer().then((res) => {
+      Api.Member.get_point_confirm_failed_seller().then((res) => {
         setData(res.data);
       });
     }
@@ -242,4 +244,4 @@ const RequestPointTransactionPage = () => {
   );
 };
 
-export default RequestPointTransactionPage;
+export default FailedPointTransactionPage;

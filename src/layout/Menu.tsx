@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import useInfoStore from '@/store/info';
+import { ThousandSymbolFormat } from '@/ultis/common';
 
 const LayoutMenu = () => {
   const pathname = usePathname();
@@ -88,7 +89,9 @@ const LayoutMenu = () => {
       </div>
       <div className="text-white flex items-center space-x-4">
         <div className="relative flex  bg-[#ffffff10] p-2 rounded-md font-bold">
-          <span className="text-lg font-bold">{point}</span>
+          <span className="text-lg font-bold">
+            {ThousandSymbolFormat(point)}
+          </span>
           <sup className="ml-1 text-xs text-gray-400">點數</sup>
         </div>
 

@@ -1,73 +1,66 @@
 'use client';
 import './globals.css';
-import LayoutMenu from '@/layout/Menu';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { ConfigProvider, Layout } from 'antd';
+import { ConfigProvider } from 'antd';
 import theme from '@/theme/themeConfig';
-import LayoutMenuMobile from '@/layout/LayoutMenuMobile';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import Api from '@/api';
 import { parseJwt } from '@/ultis/common';
 import useInfoStore from '@/store/info';
-
-const { Content } = Layout;
+import ChildrenLayout from './childLayout';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const token = useSearchParams().get('token');
-  const infoStore = useInfoStore();
+  const login_token = useSearchParams().get('token') as string;
+  const token = useInfoStore((state) => state.token);
+  const setToken = useInfoStore((state) => state.setToken);
+  const setMemberId = useInfoStore((state) => state.setMemberId);
+  const setMerchantId = useInfoStore((state) => state.setMerchantId);
+  const setPoint = useInfoStore((state) => state.setPoint);
+
+  useEffect(() => {
+    if (login_token) {
+      const jwt = parseJwt(login_token);
+
+      const memberId = jwt.jti;
+      const merchantId = jwt.iss.split('merchant: ')[1];
+
+      setMemberId(memberId);
+      setMerchantId(merchantId);
+
+      localStorage.setItem('member_id', memberId);
+      localStorage.setItem('merchant_id', merchantId);
+
+      Api.Auth.auth_login({
+        id: memberId,
+        login_token,
+      }).then((res) => {
+        const token = res.data.access_token;
+
+        setToken(token);
+        localStorage.setItem('token', token);
+      });
+    }
+  }, [login_token]);
 
   useEffect(() => {
     if (token) {
-      const jwt = parseJwt(token);
-      const memberId = jwt.payload.member_id;
-      const merchantId = jwt.claims.iss.split('merchant: ')[1];
-
-      infoStore.setToken(token);
-      infoStore.setMemberId(memberId);
-      infoStore.setMerchantId(merchantId);
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('member_id', memberId);
-      localStorage.setItem('merchant_id', merchantId);
+      Api.Member.get_info().then((res) => {
+        setPoint(res.data.point);
+      });
     }
   }, [token]);
-
-  useEffect(() => {
-    Api.Member.get_info().then((res) => {
-      infoStore.setPoint(res.data.point);
-    });
-  }, [infoStore.token]);
 
   return (
     <html lang="en">
       <body>
         <AntdRegistry>
           <ConfigProvider theme={theme}>
-            <div className="flex flex-col h-screen space-y-4">
-              <Layout>
-                <div className="max-md:hidden">
-                  <LayoutMenu />
-                </div>
-                <div className="h-20 md:hidden">
-                  <LayoutMenuMobile />
-                </div>
-
-                <Content>
-                  <div
-                    style={{
-                      height: 'calc(100% - 96px)',
-                    }}
-                  >
-                    {children}
-                  </div>
-                </Content>
-              </Layout>
-            </div>
+            <ChildrenLayout>{children}</ChildrenLayout>
           </ConfigProvider>
         </AntdRegistry>
       </body>

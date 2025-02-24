@@ -15,9 +15,8 @@ interface BuyModalProps {
 const BuyModal = (props: BuyModalProps) => {
   const [form] = Form.useForm();
   const setData = useMessageStore((state) => state.setData);
-  const set_acquisition_order = usePointStore(
-    (state) => state.set_acquisition_order,
-  );
+
+  const set_point_order = usePointStore((state) => state.set_point_order);
 
   const options = [
     {
@@ -31,20 +30,18 @@ const BuyModal = (props: BuyModalProps) => {
     amount: number;
     payMenthod: string;
   }) => {
-    Api.Market.post_point_acquisition_sell({
-      point_acquisition_id: props.data.id,
+    Api.Market.post_point_order_buy({
+      point_order_id: props.data.id,
       quantity: values.quantity,
-    }).then(async (res) => {
-      console.log(res, 'res');
-
+    }).then(async () => {
       setData({
         show: true,
-        content: '您的訂單已成功發佈，請耐心等待買家購買。',
+        content: '您的訂單已成功發佈，請耐心等待賣家出售。',
         type: 'success',
       });
 
-      await Api.Market.get_point_acquisition().then((res) => {
-        set_acquisition_order(res.data);
+      await Api.Market.get_point_order().then((res) => {
+        set_point_order(res.data);
       });
 
       props.setOpen(false);
@@ -72,7 +69,7 @@ const BuyModal = (props: BuyModalProps) => {
     >
       <div className="mt-4">
         <Form form={form} onFinish={onFinish} layout="horizontal">
-          <Form.Item label="購買點數" name="quantity">
+          <Form.Item label="支付金額" name="quantity">
             <InputNumber
               onChange={(value) => {
                 if (value && props.data.price) {
@@ -88,7 +85,7 @@ const BuyModal = (props: BuyModalProps) => {
               min={0}
             />
           </Form.Item>
-          <Form.Item label="支付金額" name="amount">
+          <Form.Item label="收到點數" name="amount">
             <InputNumber
               onChange={(value) => {
                 if (value && props.data.price) {

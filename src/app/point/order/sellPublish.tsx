@@ -1,4 +1,5 @@
 import Api from '@/api';
+import useInfoStore from '@/store/info';
 import useMessageStore from '@/store/message';
 import usePointStore from '@/store/point';
 import { Form, Input, InputNumber, Modal } from 'antd';
@@ -11,6 +12,7 @@ interface BuyPublishModalProps {
 const BuyPublishModal = (props: BuyPublishModalProps) => {
   const [form] = Form.useForm();
   const setData = useMessageStore((state) => state.setData);
+  const point = useInfoStore((state) => state.point);
 
   const set_point_order = usePointStore((state) => state.set_point_order);
 
@@ -67,7 +69,16 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
       }}
     >
       <div className="mt-4">
-        <Form form={form} onFinish={onFinish} layout="vertical">
+        <Form
+          form={form}
+          initialValues={{
+            price: 1,
+            quantity: point,
+            amount: point,
+          }}
+          onFinish={onFinish}
+          layout="vertical"
+        >
           <Form.Item
             label="定價(NT/點數)"
             rules={[

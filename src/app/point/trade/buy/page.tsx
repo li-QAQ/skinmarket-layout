@@ -2,12 +2,12 @@
 
 import { Button, Table } from 'antd';
 import { useEffect, useState } from 'react';
-import { numberCarry } from '@/ultis/common';
+import { numberCarry, ThousandSymbolFormat } from '@/ultis/common';
 
 import Api from '@/api';
 import usePointStore from '@/store/point';
 import useInfoStore from '@/store/info';
-import SellModal from '../sell';
+import BuyModal from '../buy';
 
 const Page = () => {
   const [data, setData] = useState({
@@ -28,7 +28,7 @@ const Page = () => {
 
   return (
     <>
-      <SellModal open={isOpen} setOpen={setIsOpen} data={data} />
+      <BuyModal open={isOpen} setOpen={setIsOpen} data={data} />
 
       <Table
         pagination={{
@@ -42,15 +42,36 @@ const Page = () => {
             key: 'member_id',
           },
           {
-            title: '價格(台幣/點數)',
-            dataIndex: 'price',
-            key: 'price',
-            render: (price: number) => `${numberCarry(price, 2).toFixed(2)} NT`,
-          },
-          {
-            title: '點數數量',
+            title: '數量',
             dataIndex: 'quantity',
             key: 'quantity',
+            align: 'right',
+            render: (quantity: number) => {
+              if (quantity === -1) {
+                return '∞';
+              } else {
+                return ThousandSymbolFormat(quantity);
+              }
+            },
+          },
+          {
+            title: '單價',
+            dataIndex: 'price',
+            key: 'price',
+            align: 'right',
+            render: (price: number) => `NT ${numberCarry(price, 2).toFixed(2)}`,
+          },
+          {
+            title: '合計',
+            dataIndex: 'total',
+            key: 'total',
+            align: 'right',
+            render: (_: any, record: any) => {
+              if (record.quantity === -1) {
+                return '∞';
+              }
+              return `NT ${ThousandSymbolFormat(record.price * record.quantity)}`;
+            },
           },
           {
             title: '備註',

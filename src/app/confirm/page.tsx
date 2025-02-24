@@ -60,6 +60,7 @@ const ConfirmPage = () => {
       title: '單價',
       dataIndex: 'price',
       key: 'price',
+      align: 'right',
     },
     {
       title: '數量',

@@ -48,16 +48,19 @@ const SellHistory = () => {
       title: '單價',
       dataIndex: 'price',
       key: 'price',
+      align: 'right',
     },
     {
       title: '數量',
       dataIndex: 'quantity',
       key: 'Quantity',
+      align: 'right',
     },
     {
       title: '總額',
       dataIndex: 'total',
       key: 'Total',
+      align: 'right',
       render: (text: string, record: any) => {
         return record.price * record.quantity;
       },

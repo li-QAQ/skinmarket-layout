@@ -36,5 +36,7 @@ const Record = () => {
 
   return <Table columns={columns} dataSource={data} />;
 };
-
+// 1. 上傳單據
+// 2. 後台管理
+// 3. 賣家確認視窗
 export default Record;

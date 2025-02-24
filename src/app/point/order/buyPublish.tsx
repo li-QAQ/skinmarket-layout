@@ -1,7 +1,8 @@
 import Api from '@/api';
 import useMessageStore from '@/store/message';
 import usePointStore from '@/store/point';
-import { Form, Input, InputNumber, Modal } from 'antd';
+import { Checkbox, Form, Input, InputNumber, Modal } from 'antd';
+import { useState } from 'react';
 
 interface BuyPublishModalProps {
   open: boolean;
@@ -10,6 +11,7 @@ interface BuyPublishModalProps {
 
 const BuyPublishModal = (props: BuyPublishModalProps) => {
   const [form] = Form.useForm();
+  const [infinityBuy, setInfinityBuy] = useState(false);
 
   const set_acquisition_order = usePointStore(
     (state) => state.set_acquisition_order,
@@ -24,7 +26,7 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
   }) => {
     Api.Market.post_point_acquisition({
       price: values.price,
-      quantity: values.quantity,
+      quantity: infinityBuy ? -1 : values.quantity,
       description: values.description,
     }).then(async () => {
       await Api.Member.get_point_acquisition().then((res) => {
@@ -61,7 +63,14 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
       }}
     >
       <div className="mt-4">
-        <Form form={form} onFinish={onFinish} layout="vertical">
+        <Form
+          form={form}
+          onFinish={onFinish}
+          initialValues={{
+            price: 1,
+          }}
+          layout="vertical"
+        >
           <Form.Item
             label="定價(NT/點數)"
             rules={[
@@ -89,17 +98,27 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
               }}
             />
           </Form.Item>
+          <Form.Item label="無限收購點數" name="price" noStyle>
+            <Checkbox
+              onChange={() => {
+                setInfinityBuy(!infinityBuy);
+              }}
+            >
+              無限收購點數
+            </Checkbox>
+          </Form.Item>
           <Form.Item
             label="點數"
             rules={[
               {
-                required: true,
+                required: !infinityBuy,
                 message: '請輸入點數',
               },
             ]}
             name="quantity"
           >
             <InputNumber
+              disabled={infinityBuy}
               style={{
                 width: '100%',
               }}
@@ -119,13 +138,14 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
             label="總額(NT)"
             rules={[
               {
-                required: true,
+                required: !infinityBuy,
                 message: '請輸入總額',
               },
             ]}
             name="amount"
           >
             <InputNumber
+              disabled={infinityBuy}
               style={{
                 width: '100%',
               }}

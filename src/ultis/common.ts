@@ -25,6 +25,6 @@ export const numberCarry = (num: number, length: number = 0): number => {
 };
 
 // 數字1000 => 1,000， 以此類推
-export const numberFormat = (num: number): string => {
+export const ThousandSymbolFormat = (num: number): string => {
   return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
