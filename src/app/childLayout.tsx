@@ -32,7 +32,7 @@ export default function ChildrenLayout({
   }, [data.show]);
 
   return (
-    <div className="flex flex-col h-screen space-y-4">
+    <div className="flex flex-col h-screen space-y-4 ">
       {contextHolder}
 
       <Layout>
@@ -44,6 +44,7 @@ export default function ChildrenLayout({
             style={{
               height: 'calc(100% - 96px)',
             }}
+            className="max-md:px-2"
           >
             {children}
           </div>

@@ -20,21 +20,6 @@ const Profile = ({ children }: { children?: React.ReactNode }) => {
       label: '收款方式',
       key: '/profile/payment',
     },
-    {
-      label: '消息中心',
-      key: '4',
-      children: '',
-    },
-    {
-      label: '幫助中心',
-      key: '5',
-      children: '',
-    },
-    {
-      label: '聯繫客服',
-      key: '6',
-      children: '',
-    },
   ];
 
   return (

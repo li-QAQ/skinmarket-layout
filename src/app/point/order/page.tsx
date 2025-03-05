@@ -70,6 +70,17 @@ const PointOrderSell = () => {
             },
           },
           {
+            title: '狀態',
+            dataIndex: 'status',
+            key: 'status',
+            render: (status: number) => {
+              if (status === 1) {
+                return '已完成';
+              }
+              return '進行中';
+            },
+          },
+          {
             title: '備註',
             dataIndex: 'description',
             key: 'description',
@@ -81,7 +92,7 @@ const PointOrderSell = () => {
             render: (_: any, record: any) => {
               return (
                 <Popconfirm
-                  title="確定要取消此訂單嗎？"
+                  title="確定要刪除記錄嗎?"
                   description="此操作不可逆"
                   okText="是"
                   cancelText="否"
@@ -89,9 +100,13 @@ const PointOrderSell = () => {
                     cancelOrder(record.id);
                   }}
                 >
-                  <Button type="primary" danger>
-                    取消
-                  </Button>
+                  {record.status === 1 ? (
+                    <Button type="primary">刪除記錄</Button>
+                  ) : (
+                    <Button type="primary" danger>
+                      取消
+                    </Button>
+                  )}
                 </Popconfirm>
               );
             },

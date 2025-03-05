@@ -5,10 +5,14 @@ import { ThousandSymbolFormat } from '@/ultis/common';
 import { Button, message, Popconfirm, Segmented, Table } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import UploadReceipt from './UploadReceipt';
 
 const RequestPointTransactionPage = () => {
   const member_id = useInfoStore((state) => state.member_id);
   const [identity, setIdentity] = useState('request');
+  const [uploadOpen, setUploadOpen] = useState(false);
+  const [confirmId, setConfirmId] = useState('');
+  const [traderId, setTraderId] = useState();
   const requestColumns: any = [
     {
       title: '訂單編號',
@@ -51,15 +55,12 @@ const RequestPointTransactionPage = () => {
     {
       title: '操作',
       dataIndex: 'status',
-      width: 250,
+      width: 280,
       render: (_: any, record: any) => {
-        if (
-          record.reference_type === 'PointAcquisition' &&
-          record.buyer_id === member_id
-        ) {
+        if (record.buyer_id == member_id) {
           return (
-            <div className="space-x-4">
-              <Button
+            <div className="flex space-x-4">
+              {/* <Button
                 type="primary"
                 onClick={() => {
                   Api.Member.patch_point_confirm(record.id, 1).then(() => {
@@ -72,50 +73,75 @@ const RequestPointTransactionPage = () => {
                 }}
               >
                 確認
-              </Button>
-              <Button
-                type="primary"
-                danger
-                onClick={() => {
-                  Api.Member.patch_point_confirm(record.id, 2).then(() => {
-                    Api.Member.get_point_confirm_buyer().then((res) => {
-                      setData(res.data);
-                      message.success('取消訂單成功');
+              </Button> */}
+
+              {record.status === 0 && (
+                <div>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      // Api.Member.patch_point_confirm(record.id, 1).then(() => {
+                      //   Api.Member.get_point_confirm_buyer().then((res) => {
+                      //     setData(res.data);
+                      //     message.success('確認訂單成功');
+                      //   });
+                      // });
+                      setConfirmId(record.id);
+                      setUploadOpen(true);
+                      setTraderId(record.seller_id);
+                    }} //Upload receipt
+                  >
+                    我要付款
+                  </Button>
+                </div>
+              )}
+
+              {record.status === 3 && (
+                <div>
+                  <Button disabled>審核中</Button>
+                </div>
+              )}
+
+              {record.reference_type === 'PointAcquisition' && (
+                <Button
+                  type="primary"
+                  danger
+                  onClick={() => {
+                    Api.Member.patch_point_confirm(record.id, 2).then(() => {
+                      Api.Member.get_point_confirm_buyer().then((res) => {
+                        setData(res.data);
+                        message.success('拒絕請求成功');
+                      });
                     });
-                  });
-                }}
-              >
-                取消訂單
-              </Button>
+                  }}
+                >
+                  拒絕請求
+                </Button>
+              )}
+
+              {record.reference_type === 'PointOrder' && (
+                <Popconfirm
+                  title="確定要取消此請求嗎?"
+                  description="此操作不可逆"
+                  okText="是"
+                  cancelText="否"
+                  onConfirm={() => {
+                    Api.Member.del_point_confirm(record.id).then(() => {
+                      Api.Member.get_point_confirm_buyer().then((res) => {
+                        setData(res.data);
+                        message.success('撤回請求成功');
+                      });
+                    });
+                  }}
+                >
+                  <Button type="primary" danger>
+                    撤回請求
+                  </Button>
+                </Popconfirm>
+              )}
             </div>
           );
         }
-
-        return (
-          <div className="flex space-x-4 justify-center items-center">
-            <div>等待對方確認</div>
-            <div className="space-x-4">
-              <Popconfirm
-                title="確定要取消此請求嗎?"
-                description="此操作不可逆"
-                okText="是"
-                cancelText="否"
-                onConfirm={() => {
-                  Api.Member.del_point_confirm(record.id).then(() => {
-                    Api.Member.get_point_confirm_buyer().then((res) => {
-                      setData(res.data);
-                      message.success('取消請求成功');
-                    });
-                  });
-                }}
-              >
-                <Button type="primary" danger>
-                  取消訂單
-                </Button>
-              </Popconfirm>
-            </div>
-          </div>
-        );
       },
     },
   ];
@@ -134,14 +160,14 @@ const RequestPointTransactionPage = () => {
       dataIndex: 'reference_type',
       render: (reference_type: string, record: any) => {
         if (reference_type === 'PointOrder' && member_id === record.buyer_id) {
-          return '對方取消';
+          return '對方拒絕';
         }
 
         if (
           reference_type === 'PointAcquisition' &&
           member_id === record.buyer_id
         ) {
-          return '被我取消';
+          return '被我拒絕';
         }
 
         return '未知原因';
@@ -217,6 +243,14 @@ const RequestPointTransactionPage = () => {
         ]}
         onChange={(value) => setIdentity(value)}
       />
+
+      <UploadReceipt
+        traderId={traderId}
+        confirmId={confirmId}
+        open={uploadOpen}
+        setOpen={setUploadOpen}
+      />
+
       {identity === 'request' && (
         <Table
           pagination={{

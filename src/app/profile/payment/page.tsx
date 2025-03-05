@@ -1,12 +1,25 @@
 'use client';
-import { Button, message, Space, Table } from 'antd';
-import { useEffect, useState } from 'react';
+import { Button, message, Space, Table, Tour } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import AddPayment from '../AddPayment';
 import Api from '@/api';
+import useTourStore from '@/store/tour';
+import { TourProps } from 'antd/lib';
 
 const ProfilePayment = () => {
   const [isOpenPayment, setIsOpenPayment] = useState(false);
   const [data, setData] = useState<any[]>([]);
+
+  const bankTour: boolean = useTourStore((state) => state.bankTour);
+  const setBankTour = useTourStore((state) => state.setBankTour);
+  const ref1 = useRef(null);
+  const steps: TourProps['steps'] = [
+    {
+      title: '添加收款方式',
+      description: '點擊"添加收款方式"按鈕進行添加。',
+      target: () => ref1.current,
+    },
+  ];
 
   useEffect(() => {
     Api.Member.get_bank().then((res: any) => {
@@ -24,11 +37,17 @@ const ProfilePayment = () => {
 
         <div className="flex justify-end">
           <AddPayment open={isOpenPayment} setOpen={setIsOpenPayment} />
-          <Button type="primary" onClick={() => setIsOpenPayment(true)}>
+          <Button
+            ref={ref1}
+            type="primary"
+            onClick={() => setIsOpenPayment(true)}
+          >
             添加收款方式
           </Button>
         </div>
       </div>
+
+      <Tour open={bankTour} onClose={() => setBankTour(false)} steps={steps} />
 
       <div>
         <Table

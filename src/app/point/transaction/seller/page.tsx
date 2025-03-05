@@ -51,73 +51,80 @@ const FailedPointTransactionPage = () => {
     {
       title: '操作',
       dataIndex: 'status',
-      width: 250,
+      width: 320,
       render: (_: any, record: any) => {
-        if (
-          record.reference_type === 'PointOrder' &&
-          record.seller_id === member_id
-        ) {
+        const rejectStatus = record.status === 3 || record.status === 0;
+        if (record.seller_id == member_id) {
           return (
-            <div className="space-x-4">
-              <Button
-                type="primary"
-                onClick={() => {
-                  Api.Member.patch_point_confirm(record.id, 1).then(() => {
-                    Api.Member.get_point_confirm_seller().then((res) => {
-                      setData(res.data);
-
-                      message.success('確認訂單成功');
-                    });
-                  });
-                }}
-              >
-                確認
-              </Button>
-              <Button
-                type="primary"
-                danger
-                onClick={() => {
-                  Api.Member.patch_point_confirm(record.id, 2).then(() => {
-                    Api.Member.get_point_confirm_seller().then((res) => {
-                      setData(res.data);
-
-                      message.success('拒絕訂單成功');
-                    });
-                  });
-                }}
-              >
-                拒絕訂單
-              </Button>
-            </div>
-          );
-        }
-
-        return (
-          <div className="flex space-x-4 justify-center items-center">
-            <div>等待對方確認</div>
-            <div className="space-x-4">
+            <div className="flex space-x-4 items-center">
               <Popconfirm
-                title="確定要取消此請求嗎?"
+                title="確定要確認此筆交易嗎?"
                 description="此操作不可逆"
                 okText="是"
                 cancelText="否"
                 onConfirm={() => {
-                  Api.Member.del_point_confirm(record.id).then(() => {
+                  Api.Member.patch_point_confirm(record.id, 1).then(() => {
                     Api.Member.get_point_confirm_seller().then((res) => {
                       setData(res.data);
 
-                      message.success('取消請求成功');
+                      message.success('確認收款成功');
                     });
                   });
                 }}
               >
-                <Button type="primary" danger>
-                  撤回請求
+                <Button type="primary">
+                  {record.status === 0 && '強制確認收款'}
+                  {record.status === 3 && '強制確認收款'}
+                  {record.status === 4 && '確認收款'}
                 </Button>
               </Popconfirm>
+
+              {record.reference_type === 'PointAcquisition' &&
+                record.status === 0 && (
+                  <Popconfirm
+                    title="確定要撤回此請求嗎?"
+                    description="此操作不可逆"
+                    okText="是"
+                    cancelText="否"
+                    onConfirm={() => {
+                      Api.Member.del_point_confirm(record.id).then(() => {
+                        Api.Member.get_point_confirm_seller().then((res) => {
+                          setData(res.data);
+
+                          message.success('撤回請求成功');
+                        });
+                      });
+                    }}
+                  >
+                    <Button type="primary" danger>
+                      撤回請求
+                    </Button>
+                  </Popconfirm>
+                )}
+
+              {record.reference_type === 'PointOrder' && (
+                <Button
+                  disabled={rejectStatus}
+                  type="primary"
+                  danger
+                  onClick={() => {
+                    Api.Member.patch_point_confirm(record.id, 2).then(() => {
+                      Api.Member.get_point_confirm_seller().then((res) => {
+                        setData(res.data);
+
+                        message.success('拒絕訂單請求');
+                      });
+                    });
+                  }}
+                >
+                  {rejectStatus ? '' : '拒絕請求'}
+                  {record.status === 0 && '(未上傳付款證明)'}
+                  {record.status === 3 && '(付款證明審核中)'}
+                </Button>
+              )}
             </div>
-          </div>
-        );
+          );
+        }
       },
     },
   ];

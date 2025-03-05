@@ -2,7 +2,7 @@ import Api from '@/api';
 import useInfoStore from '@/store/info';
 import useMessageStore from '@/store/message';
 import usePointStore from '@/store/point';
-import { Form, InputNumber, message, Modal, Select } from 'antd';
+import { Form, InputNumber, Modal, Select } from 'antd';
 import { useEffect } from 'react';
 
 interface SellModalProps {
@@ -54,7 +54,11 @@ const SellModal = (props: SellModalProps) => {
         props.setOpen(false);
       })
       .catch((err) => {
-        message.error(err.data.message);
+        setData({
+          show: true,
+          content: err.data.message,
+          type: 'error',
+        });
       });
   };
 

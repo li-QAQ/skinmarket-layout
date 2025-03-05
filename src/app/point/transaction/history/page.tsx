@@ -10,15 +10,17 @@ const PointTransactionHistoryPage = () => {
     {
       title: '訂單編號',
       dataIndex: 'id',
+      render: (id: number, record: any) =>
+        record.reference_type === 'PointOrder' ? `O_${id}` : `A_${id}`,
     },
     {
-      title: '交易編號',
+      title: '請求編號',
       dataIndex: 'reference_id',
     },
-    {
-      title: '交易類型',
-      dataIndex: 'reference_type',
-    },
+    // {
+    //   title: '交易類型',
+    //   dataIndex: 'reference_type',
+    // },
     {
       title: '數量',
       dataIndex: 'quantity',

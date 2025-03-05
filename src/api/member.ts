@@ -86,6 +86,14 @@ const get_point_transaction_history = () => {
   );
 };
 
+// 取得 KYC 資訊
+const get_kyc = () => {
+  const MERCHANT_ID = getMerchantId();
+  const MEMBER_ID = getMemberId();
+  return apiClient.get(`/${MERCHANT_ID}/member/${MEMBER_ID}/kyc`);
+};
+
+// 新增 KYC 資訊
 const post_kyc = (data: any) => {
   const MERCHANT_ID = getMerchantId();
   const MEMBER_ID = getMemberId();
@@ -112,6 +120,23 @@ const del_bank = (id: number) => {
   return apiClient.delete(`/${MERCHANT_ID}/member/${MEMBER_ID}/bank/${id}`);
 };
 
+const post_upload_receipt = (confirm_id: string, data: any) => {
+  const MERCHANT_ID = getMerchantId();
+  const MEMBER_ID = getMemberId();
+  return apiClient.post(
+    `/${MERCHANT_ID}/member/${MEMBER_ID}/point/confirm/${confirm_id}/upload`,
+    data,
+  );
+};
+
+// 取得公開支付方式
+const get_public_payment_method = (member_id: string) => {
+  const MERCHANT_ID = getMerchantId();
+  return apiClient.get(
+    `/${MERCHANT_ID}/member/${member_id}/public/payment_method`,
+  );
+};
+
 const Member = {
   get_info,
   get_point_acquisition,
@@ -123,9 +148,12 @@ const Member = {
   patch_point_confirm,
   get_point_order,
   get_point_transaction_history,
+  get_kyc,
   post_kyc,
   get_bank,
   post_bank,
   del_bank,
+  post_upload_receipt,
+  get_public_payment_method,
 };
 export default Member;

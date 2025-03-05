@@ -69,7 +69,7 @@ const LayoutMenu = () => {
   ];
 
   return (
-    <div className="max-w-screen-xl flex items-center h-20 mx-auto justify-between">
+    <div className="max-w-screen-xl flex items-center h-20 mx-auto justify-between max-md:px-2">
       <div className="flex space-x-8 font-bold text-sm ">
         {itmes.map((item, index) => {
           return (

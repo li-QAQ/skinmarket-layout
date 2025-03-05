@@ -8,6 +8,7 @@ import Api from '@/api';
 import usePointStore from '@/store/point';
 import useInfoStore from '@/store/info';
 import SellModal from './sell';
+//import ResponsiveTable from '@/components/ResponsiveTable';
 
 const Page = () => {
   const [data, setData] = useState({
@@ -28,81 +29,90 @@ const Page = () => {
     });
   }, []);
 
+  const columns: any = [
+    {
+      title: '買家',
+      dataIndex: 'member_id',
+      key: 'member_id',
+    },
+    {
+      title: '數量',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      align: 'right',
+      render: (quantity: number) => {
+        if (quantity === -1) {
+          return '∞';
+        } else {
+          return ThousandSymbolFormat(quantity);
+        }
+      },
+    },
+    {
+      title: '單價',
+      dataIndex: 'price',
+      key: 'price',
+      align: 'right',
+      render: (price: number) => `NT ${numberCarry(price, 2).toFixed(2)}`,
+    },
+    {
+      title: '合計',
+      dataIndex: 'total',
+      key: 'total',
+      align: 'right',
+      render: (_: any, record: any) => {
+        if (record.quantity === -1) {
+          return '∞';
+        }
+        return `NT ${ThousandSymbolFormat(record.price * record.quantity)}`;
+      },
+    },
+    {
+      title: '備註',
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: '交易',
+      key: 'action',
+      width: 200,
+      render: (_: any, record: any) => {
+        return (
+          member_id !== record.member_id && (
+            <Button
+              type="primary"
+              danger
+              onClick={() => {
+                setIsOpen(true);
+                setData(record);
+              }}
+            >
+              出售
+            </Button>
+          )
+        );
+      },
+    },
+  ];
+
   return (
     <>
       <SellModal open={isOpen} setOpen={setIsOpen} data={data} />
+
       <Table
         pagination={{
           pageSize: 9,
         }}
         rowKey="id"
-        columns={[
-          {
-            title: '買家',
-            dataIndex: 'member_id',
-            key: 'member_id',
-          },
-          {
-            title: '數量',
-            dataIndex: 'quantity',
-            key: 'quantity',
-            align: 'right',
-            render: (quantity: number) => {
-              if (quantity === -1) {
-                return '∞';
-              } else {
-                return ThousandSymbolFormat(quantity);
-              }
-            },
-          },
-          {
-            title: '單價',
-            dataIndex: 'price',
-            key: 'price',
-            align: 'right',
-            render: (price: number) => `NT ${numberCarry(price, 2).toFixed(2)}`,
-          },
-          {
-            title: '合計',
-            dataIndex: 'total',
-            key: 'total',
-            align: 'right',
-            render: (_: any, record: any) => {
-              if (record.quantity === -1) {
-                return '∞';
-              }
-              return `NT ${ThousandSymbolFormat(record.price * record.quantity)}`;
-            },
-          },
-          {
-            title: '備註',
-            dataIndex: 'description',
-            key: 'description',
-          },
-          {
-            title: '交易',
-            key: 'action',
-            width: 200,
-            render: (_: any, record: any) => {
-              return (
-                member_id !== record.member_id && (
-                  <Button
-                    type="primary"
-                    danger
-                    onClick={() => {
-                      setIsOpen(true);
-                      setData(record);
-                    }}
-                  >
-                    出售
-                  </Button>
-                )
-              );
-            },
-          },
-        ]}
+        columns={columns}
         dataSource={acquisition_order}
       />
+
+      {/* <ResponsiveTable
+        rowKey="id"
+        columns={columns}
+        dataSource={acquisition_order}
+      /> */}
     </>
   );
 };
