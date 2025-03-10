@@ -1,6 +1,7 @@
 'use client';
 
 import useInfoStore from '@/store/info';
+import { ThousandSymbolFormat } from '@/ultis/common';
 //import { Skeleton } from 'antd';
 
 const ProfilePoint = () => {
@@ -20,15 +21,17 @@ const ProfilePoint = () => {
       <div className="font-normal space-y-6">
         <div className="flex items-center">
           <div className="basis-1/6">可用點數</div>
-          <div className="basis-5/6">{point}</div>
+          <div className="basis-5/6">{ThousandSymbolFormat(point)}</div>
         </div>
         <div className="flex items-center">
           <div className="basis-1/6">交易中點數</div>
-          <div className="basis-5/6">{pointsInTransaction}</div>
+          <div className="basis-5/6">
+            {ThousandSymbolFormat(pointsInTransaction)}
+          </div>
         </div>
         <div className="flex items-center">
           <div className="basis-1/6">我的總點數</div>
-          <div className="basis-5/6">{totalPoint}</div>
+          <div className="basis-5/6">{ThousandSymbolFormat(totalPoint)}</div>
         </div>
       </div>
     </div>

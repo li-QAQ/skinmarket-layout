@@ -1,11 +1,12 @@
 'use client';
 
-import { Button, Popconfirm, Table } from 'antd';
+import { Button, Popconfirm } from 'antd';
 import { useEffect } from 'react';
 import { numberCarry, ThousandSymbolFormat } from '@/ultis/common';
 import Api from '@/api';
 import usePointStore from '@/store/point';
 import useMessageStore from '@/store/message';
+import ResponsiveTable from '@/components/ResponsiveTable';
 
 const PointOrderSell = () => {
   const point_order = usePointStore((state) => state.point_order);
@@ -34,7 +35,7 @@ const PointOrderSell = () => {
 
   return (
     <>
-      <Table
+      <ResponsiveTable
         rowKey="id"
         columns={[
           {

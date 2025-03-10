@@ -2,10 +2,11 @@
 import Api from '@/api';
 import useInfoStore from '@/store/info';
 import { ThousandSymbolFormat } from '@/ultis/common';
-import { Button, message, Popconfirm, Segmented, Table } from 'antd';
+import { Button, message, Popconfirm, Segmented } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import UploadReceipt from './UploadReceipt';
+import ResponsiveTable from '@/components/ResponsiveTable';
 
 const RequestPointTransactionPage = () => {
   const member_id = useInfoStore((state) => state.member_id);
@@ -252,23 +253,23 @@ const RequestPointTransactionPage = () => {
       />
 
       {identity === 'request' && (
-        <Table
+        <ResponsiveTable
           pagination={{
             pageSize: 8,
           }}
           rowKey="id"
-          dataSource={data}
+          dataSource={data as any}
           columns={requestColumns}
         />
       )}
 
       {identity === 'failed' && (
-        <Table
+        <ResponsiveTable
           pagination={{
             pageSize: 8,
           }}
           rowKey="id"
-          dataSource={data}
+          dataSource={data as any}
           columns={failedColumns}
         />
       )}

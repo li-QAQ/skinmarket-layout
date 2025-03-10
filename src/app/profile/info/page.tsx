@@ -58,7 +58,7 @@ const ProfileInfo = () => {
           <>
             <div className="flex space-x-20 items-center">
               <div className="basis-1/6">姓名</div>
-              <div className="basis-5/6">{kyc?.address}</div>
+              <div className="basis-5/6">{kyc?.real_name}</div>
             </div>
             <div className="flex space-x-20 items-center">
               <div className="basis-1/6">手機號碼</div>

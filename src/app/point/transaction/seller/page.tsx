@@ -1,8 +1,9 @@
 'use client';
 import Api from '@/api';
+import ResponsiveTable from '@/components/ResponsiveTable';
 import useInfoStore from '@/store/info';
 import { ThousandSymbolFormat } from '@/ultis/common';
-import { Button, message, Popconfirm, Segmented, Table } from 'antd';
+import { Button, message, Popconfirm, Segmented } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -227,23 +228,23 @@ const FailedPointTransactionPage = () => {
         onChange={(value) => setIdentity(value)}
       />
       {identity === 'request' && (
-        <Table
+        <ResponsiveTable
           pagination={{
             pageSize: 8,
           }}
           rowKey="id"
-          dataSource={data}
+          dataSource={data as any}
           columns={requestColumns}
         />
       )}
 
       {identity === 'failed' && (
-        <Table
+        <ResponsiveTable
           pagination={{
             pageSize: 8,
           }}
           rowKey="id"
-          dataSource={data}
+          dataSource={data as any}
           columns={failedColumns}
         />
       )}

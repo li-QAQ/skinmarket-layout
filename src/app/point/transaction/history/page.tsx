@@ -1,7 +1,7 @@
 'use client';
 import Api from '@/api';
+import ResponsiveTable from '@/components/ResponsiveTable';
 import { ThousandSymbolFormat } from '@/ultis/common';
-import { Table } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -62,7 +62,7 @@ const PointTransactionHistoryPage = () => {
       total_price: number;
       created_at: string;
     }[]
-  >();
+  >([]);
 
   useEffect(() => {
     Api.Member.get_point_transaction_history().then((res) => {
@@ -71,13 +71,13 @@ const PointTransactionHistoryPage = () => {
   }, []);
 
   return (
-    <Table
+    <ResponsiveTable
       rowKey="id"
       pagination={{
         pageSize: 8,
       }}
-      dataSource={data}
       columns={columns}
+      dataSource={data}
     />
   );
 };

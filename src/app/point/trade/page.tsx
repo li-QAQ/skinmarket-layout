@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Table } from 'antd';
+import { Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { numberCarry, ThousandSymbolFormat } from '@/ultis/common';
 
@@ -8,9 +8,9 @@ import Api from '@/api';
 import usePointStore from '@/store/point';
 import useInfoStore from '@/store/info';
 import SellModal from './sell';
-//import ResponsiveTable from '@/components/ResponsiveTable';
+import ResponsiveTable from '@/components/ResponsiveTable';
 
-const Page = () => {
+const SellPage = () => {
   const [data, setData] = useState({
     id: 0,
     price: 0,
@@ -99,7 +99,7 @@ const Page = () => {
     <>
       <SellModal open={isOpen} setOpen={setIsOpen} data={data} />
 
-      <Table
+      <ResponsiveTable
         pagination={{
           pageSize: 9,
         }}
@@ -107,14 +107,8 @@ const Page = () => {
         columns={columns}
         dataSource={acquisition_order}
       />
-
-      {/* <ResponsiveTable
-        rowKey="id"
-        columns={columns}
-        dataSource={acquisition_order}
-      /> */}
     </>
   );
 };
 
-export default Page;
+export default SellPage;

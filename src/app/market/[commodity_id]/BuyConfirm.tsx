@@ -8,7 +8,7 @@ interface BuyConfirmModalProps {
   setOpen: (open: boolean) => void;
 }
 const BuyConfirmModal = (props: BuyConfirmModalProps) => {
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [form] = Form.useForm();
   const handleOk = () => {
     form.submit();
@@ -18,7 +18,7 @@ const BuyConfirmModal = (props: BuyConfirmModalProps) => {
     props.setOpen(false);
   };
 
-  const handleFinish = (values: any) => {};
+  const handleFinish = () => {};
 
   return (
     <Modal

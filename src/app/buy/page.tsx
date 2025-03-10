@@ -1,6 +1,6 @@
 'use client';
 
-import { Table } from 'antd';
+import ResponsiveTable from '@/components/ResponsiveTable';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -76,7 +76,9 @@ const SellHistory = () => {
     },
   ];
 
-  return <Table rowKey="id" columns={columns as any} dataSource={items} />;
+  return (
+    <ResponsiveTable rowKey="id" columns={columns as any} dataSource={items} />
+  );
 };
 
 export default SellHistory;

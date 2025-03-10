@@ -32,6 +32,8 @@ function ResponsiveTable<T extends object>({
         )
       : columns;
 
+    console.log(item, 'displayColumns');
+
     return (
       <div className="space-y-3">
         {displayColumns
@@ -42,11 +44,20 @@ function ResponsiveTable<T extends object>({
               : item[col.dataIndex as keyof T];
 
             return (
-              <div key={col.key} className="flex justify-between gap-4">
-                <span className="text-gray-600 font-medium">
-                  {col.title as React.ReactNode}:
+              <div
+                key={col.key}
+                className="flex justify-between gap-4 items-center"
+              >
+                <span className=" font-medium">
+                  {col.title as React.ReactNode}
+                  {col.key === 'action' ? '' : ':'}
                 </span>
-                <span className="text-gray-800 flex-1 text-right">
+                <span
+                  className="flex-1"
+                  style={{
+                    textAlign: col.key === 'action' ? 'right' : 'left',
+                  }}
+                >
                   {value || '-'}
                 </span>
               </div>
@@ -57,7 +68,7 @@ function ResponsiveTable<T extends object>({
   };
 
   return (
-    <div className="p-4">
+    <div>
       {/* Desktop Table */}
       <div className={`hidden md:block ${isMobile ? 'hidden' : 'block'}`}>
         <Table
@@ -65,7 +76,6 @@ function ResponsiveTable<T extends object>({
           dataSource={dataSource}
           pagination={false}
           scroll={{ x: true }}
-          bordered
           {...props}
         />
       </div>
@@ -73,11 +83,8 @@ function ResponsiveTable<T extends object>({
       {/* Mobile Card List */}
       <div className={`md:hidden ${isMobile ? 'block' : 'hidden'}`}>
         <div className="grid gap-4 grid-cols-1">
-          {dataSource.map((item, index) => (
-            <Card
-              key={index}
-              className="shadow-lg hover:shadow-xl transition-shadow"
-            >
+          {dataSource?.map((item, index) => (
+            <Card key={index}>
               {cardRender ? cardRender(item) : autoCardRender(item)}
             </Card>
           ))}

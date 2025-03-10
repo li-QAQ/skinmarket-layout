@@ -1,7 +1,8 @@
 'use client';
 import Api from '@/api';
+import ResponsiveTable from '@/components/ResponsiveTable';
 import { ThousandSymbolFormat } from '@/ultis/common';
-import { Button, Table } from 'antd';
+import { Button } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -81,17 +82,7 @@ const PointTransactionConfirmPage = () => {
     },
   ];
 
-  const [data, setData] = useState<
-    {
-      id: number;
-      price: number;
-      quantity: number;
-      trader: string;
-      action: number;
-      created_at: string;
-      status: number;
-    }[]
-  >();
+  const [data, setData] = useState();
 
   useEffect(() => {
     Api.Member.get_point_confirm_seller().then((res) => {
@@ -101,12 +92,12 @@ const PointTransactionConfirmPage = () => {
 
   return (
     <>
-      <Table
+      <ResponsiveTable
         pagination={{
           pageSize: 8,
         }}
         rowKey="id"
-        dataSource={data}
+        dataSource={data as any}
         columns={columns}
       />
     </>

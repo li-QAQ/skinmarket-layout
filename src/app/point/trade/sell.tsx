@@ -2,6 +2,7 @@ import Api from '@/api';
 import useInfoStore from '@/store/info';
 import useMessageStore from '@/store/message';
 import usePointStore from '@/store/point';
+//import { paymentMethod } from '@/ultis/constant';
 import { Form, InputNumber, Modal, Select } from 'antd';
 import { useEffect } from 'react';
 
@@ -89,7 +90,14 @@ const SellModal = (props: SellModalProps) => {
       }}
     >
       <div className="mt-4">
-        <Form form={form} onFinish={onFinish} layout="horizontal">
+        <Form
+          form={form}
+          onFinish={onFinish}
+          layout="horizontal"
+          initialValues={{
+            payMenthod: 'Bank',
+          }}
+        >
           <Form.Item label="出售點數" name="quantity">
             <InputNumber
               onChange={(value) => {
@@ -123,7 +131,7 @@ const SellModal = (props: SellModalProps) => {
             />
           </Form.Item>
           <Form.Item label="支付方式" name="payMenthod">
-            <Select allowClear>
+            <Select>
               {options.map((option) => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}

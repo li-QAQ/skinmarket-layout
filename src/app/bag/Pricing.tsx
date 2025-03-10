@@ -20,7 +20,7 @@ const PricingModal = () => {
     setIsOpenPricingModal(false);
   };
 
-  const handleFinish = (values: any) => {};
+  const handleFinish = () => {};
 
   const footer = () => {
     return (

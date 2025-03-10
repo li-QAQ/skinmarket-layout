@@ -86,7 +86,7 @@ const AddPayment = (props: AddPaymentProps) => {
           </Form.Item>
           <Form.Item
             name="account_code"
-            label="銀行代號"
+            label="帳戶代號"
             rules={[{ required: true, message: '請輸入' }]}
           >
             <Input style={{ width: '100%' }} />

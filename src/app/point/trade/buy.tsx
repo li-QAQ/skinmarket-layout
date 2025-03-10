@@ -68,24 +68,13 @@ const BuyModal = (props: BuyModalProps) => {
       }}
     >
       <div className="mt-4">
-        <Form form={form} onFinish={onFinish} layout="horizontal">
-          <Form.Item label="支付金額" name="quantity">
-            <InputNumber
-              onChange={(value) => {
-                if (value && props.data.price) {
-                  const result: number = value * props.data.price;
-                  form.setFieldsValue({
-                    amount: Math.floor(result),
-                  });
-                }
-              }}
-              style={{
-                width: '100%',
-              }}
-              min={0}
-            />
-          </Form.Item>
-          <Form.Item label="收到點數" name="amount">
+        <Form
+          form={form}
+          onFinish={onFinish}
+          layout="horizontal"
+          initialValues={{ payMenthod: 'Bank' }}
+        >
+          <Form.Item label="支付金額" name="amount">
             <InputNumber
               onChange={(value) => {
                 if (value && props.data.price) {
@@ -101,8 +90,24 @@ const BuyModal = (props: BuyModalProps) => {
               min={0}
             />
           </Form.Item>
+          <Form.Item label="收到點數" name="quantity">
+            <InputNumber
+              onChange={(value) => {
+                if (value && props.data.price) {
+                  const result: number = value * props.data.price;
+                  form.setFieldsValue({
+                    amount: Math.floor(result),
+                  });
+                }
+              }}
+              style={{
+                width: '100%',
+              }}
+              min={0}
+            />
+          </Form.Item>
           <Form.Item label="支付方式" name="payMenthod">
-            <Select allowClear>
+            <Select>
               {options.map((option) => (
                 <Select.Option key={option.value} value={option.value}>
                   {option.label}

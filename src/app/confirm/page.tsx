@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Table } from 'antd';
+import ResponsiveTable from '@/components/ResponsiveTable';
+import { Button } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
@@ -34,7 +35,7 @@ const ConfirmPage = () => {
     ]);
   };
 
-  const handleConfirm = async (record: any) => {};
+  const handleConfirm = async () => {};
 
   useEffect(() => {
     fetchConfirmOrders();
@@ -88,10 +89,10 @@ const ConfirmPage = () => {
       dataIndex: 'Action',
       key: 'Action',
       width: 200,
-      render: (_: string, record: any) => {
+      render: (_: string) => {
         return (
           <div className="space-x-2">
-            <Button type="primary" onClick={() => handleConfirm(record)}>
+            <Button type="primary" onClick={() => handleConfirm()}>
               確認
             </Button>
             <Button type="primary" ghost>
@@ -103,7 +104,9 @@ const ConfirmPage = () => {
     },
   ];
 
-  return <Table rowKey="id" columns={columns as any} dataSource={items} />;
+  return (
+    <ResponsiveTable rowKey="id" columns={columns as any} dataSource={items} />
+  );
 };
 
 export default ConfirmPage;

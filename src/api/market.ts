@@ -1,5 +1,5 @@
 import apiClient from '@/ultis/api';
-import { getMemberId, getMerchantId } from '@/ultis/common';
+import { getMerchantId } from '@/ultis/common';
 
 const get_point_acquisition = () => {
   const MERCHANT_ID = getMerchantId();

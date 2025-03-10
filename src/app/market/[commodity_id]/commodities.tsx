@@ -1,13 +1,11 @@
-import useAuthStore from '@/store/auth';
+//import useAuthStore from '@/store/auth';
 import { Button, Table } from 'antd';
-import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import BuyConfirmModal from './BuyConfirm';
 
 const Commodities = () => {
-  const { info } = useAuthStore();
+  //const { info } = useAuthStore();
   const [items, setItems] = useState<any[]>([]);
-  const pathname = useParams();
 
   const [openBuyConfirm, setOpenBuyConfirm] = useState(false);
   const [orderId, setOrderId] = useState('');
@@ -35,7 +33,7 @@ const Commodities = () => {
       dataIndex: 'operation',
       key: 'operation',
       render: (_: any, record: any) => {
-        if (record.name == info.userId) return;
+        //if (record.name == info.userId) return;
         return (
           <Button
             type="primary"
@@ -50,7 +48,7 @@ const Commodities = () => {
         );
       },
     },
-  ];
+  ] as any;
 
   const fetchInventorys = async () => {
     setItems(

@@ -1,10 +1,11 @@
 'use client';
-import { Button, message, Space, Table, Tour } from 'antd';
+import { Button, message, Space, Tour } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import AddPayment from '../AddPayment';
 import Api from '@/api';
 import useTourStore from '@/store/tour';
 import { TourProps } from 'antd/lib';
+import ResponsiveTable from '@/components/ResponsiveTable';
 
 const ProfilePayment = () => {
   const [isOpenPayment, setIsOpenPayment] = useState(false);
@@ -50,7 +51,7 @@ const ProfilePayment = () => {
       <Tour open={bankTour} onClose={() => setBankTour(false)} steps={steps} />
 
       <div>
-        <Table
+        <ResponsiveTable
           rowKey="id"
           columns={[
             {
@@ -66,8 +67,8 @@ const ProfilePayment = () => {
             },
             {
               title: '銀行代碼',
-              dataIndex: 'account_number',
-              key: 'account_number',
+              dataIndex: 'bank_code',
+              key: 'bank_code',
             },
             {
               title: '收款賬號',
@@ -80,7 +81,7 @@ const ProfilePayment = () => {
               width: 200,
               render: (_: any, record) => (
                 <Space size="middle">
-                  <Button type="primary">編輯</Button>
+                  {/* <Button type="primary">編輯</Button> */}
                   <Button
                     type="primary"
                     danger

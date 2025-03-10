@@ -32,7 +32,7 @@ export default function ChildrenLayout({
   }, [data.show]);
 
   return (
-    <div className="flex flex-col h-screen space-y-4 ">
+    <div className="flex flex-col min-h-screen space-y-4 ">
       {contextHolder}
 
       <Layout>

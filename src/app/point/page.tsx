@@ -1,4 +1,4 @@
-const Point = () => {
+const Home = () => {
   return <div></div>;
 };
-export default Point;
+export default Home;
