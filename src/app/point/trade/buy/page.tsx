@@ -2,107 +2,107 @@
 
 import { Button } from 'antd';
 import { useEffect, useState } from 'react';
-import { numberCarry, ThousandSymbolFormat } from '@/ultis/common';
+import { ShoppingCartOutlined } from '@ant-design/icons';
 
 import Api from '@/api';
 import usePointStore from '@/store/point';
 import useInfoStore from '@/store/info';
 import BuyModal from '../buy';
-import ResponsiveTable from '@/components/ResponsiveTable';
+import PointOrderCard, { PointOrderItem } from '@/components/PointOrderCard';
+import PointCardList from '@/components/PointCardList';
 
 const BuyPage = () => {
-  const [data, setData] = useState({
+  const [selectedOrder, setSelectedOrder] = useState<{
+    id: number;
+    price: number;
+    description?: string;
+    quantity?: number;
+    member_id?: string;
+  }>({
     id: 0,
     price: 0,
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 9;
   const member_id = useInfoStore((state) => state.member_id);
 
-  const point_order = usePointStore((state) => state.point_order);
+  const point_order = usePointStore(
+    (state) => state.point_order,
+  ) as PointOrderItem[];
   const set_point_order = usePointStore((state) => state.set_point_order);
 
   useEffect(() => {
-    Api.Market.get_point_order().then((res) => {
-      set_point_order(res.data);
-    });
+    loadOrders();
   }, []);
 
-  return (
-    <>
-      <BuyModal open={isOpen} setOpen={setIsOpen} data={data} />
+  const loadOrders = () => {
+    setLoading(true);
+    Api.Market.get_point_order()
+      .then((res) => {
+        set_point_order(res.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
-      <ResponsiveTable
-        pagination={{
-          pageSize: 9,
-        }}
-        rowKey="id"
-        columns={[
-          {
-            title: '賣家',
-            dataIndex: 'member_id',
-            key: 'member_id',
-          },
-          {
-            title: '數量',
-            dataIndex: 'quantity',
-            key: 'quantity',
-            align: 'right',
-            render: (quantity: number) => {
-              if (quantity === -1) {
-                return '∞';
-              } else {
-                return ThousandSymbolFormat(quantity);
-              }
-            },
-          },
-          {
-            title: '單價',
-            dataIndex: 'price',
-            key: 'price',
-            align: 'right',
-            render: (price: number) => `NT ${numberCarry(price, 2).toFixed(2)}`,
-          },
-          {
-            title: '合計',
-            dataIndex: 'total',
-            key: 'total',
-            align: 'right',
-            render: (_: any, record: any) => {
-              if (record.quantity === -1) {
-                return '∞';
-              }
-              return `NT ${ThousandSymbolFormat(record.price * record.quantity)}`;
-            },
-          },
-          {
-            title: '備註',
-            dataIndex: 'description',
-            key: 'description',
-          },
-          {
-            title: '交易',
-            key: 'action',
-            width: 200,
-            render: (_: any, record: any) => {
-              return (
-                member_id !== record.member_id && (
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      setIsOpen(true);
-                      setData(record);
-                    }}
-                  >
-                    購買
-                  </Button>
-                )
-              );
-            },
-          },
-        ]}
-        dataSource={point_order}
+  // Filter out orders from the current user
+  const filteredOrders =
+    point_order?.filter((order) => order.member_id !== member_id) || [];
+
+  const handleBuyClick = (record: PointOrderItem & { id: number }) => {
+    setSelectedOrder({
+      id: record.id,
+      price: record.price,
+      description: record.description,
+      quantity: record.quantity,
+      member_id: record.member_id,
+    });
+    setIsOpen(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderOrderCard = (item: PointOrderItem, index: number) => (
+    <PointOrderCard
+      key={item.id || index}
+      item={item}
+      actionButton={
+        <Button
+          type="primary"
+          icon={<ShoppingCartOutlined />}
+          onClick={() =>
+            handleBuyClick(item as PointOrderItem & { id: number })
+          }
+          className="w-full"
+        >
+          購買點數
+        </Button>
+      }
+    />
+  );
+
+  return (
+    <div>
+      <BuyModal open={isOpen} setOpen={setIsOpen} data={selectedOrder} />
+
+      <PointCardList
+        items={filteredOrders}
+        loading={loading}
+        title="點數購買市場"
+        description="在這裡您可以查看所有賣家的點數出售訂單，並選擇購買您需要的點數。"
+        emptyText="目前沒有可用的出售訂單，請稍後再查看"
+        renderItem={renderOrderCard}
+        showPagination={filteredOrders.length > pageSize}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
       />
-    </>
+    </div>
   );
 };
 

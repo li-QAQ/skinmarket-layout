@@ -9,6 +9,7 @@ interface ResponsiveTableProps<T> {
   breakpoint?: number;
   cardRender?: (item: T) => React.ReactNode; // 可選覆蓋
   mobileOrder?: (keyof T)[]; // 移動端專用排序
+  rowKey: string;
   [key: string]: any;
 }
 
@@ -18,6 +19,7 @@ function ResponsiveTable<T extends object>({
   breakpoint = 768,
   cardRender,
   mobileOrder,
+  rowKey,
   ...props
 }: ResponsiveTableProps<T>) {
   const { width } = useWindowSize();
@@ -32,10 +34,8 @@ function ResponsiveTable<T extends object>({
         )
       : columns;
 
-    console.log(item, 'displayColumns');
-
     return (
-      <div className="space-y-3">
+      <div className="space-y-3" key={String(item[rowKey as keyof T])}>
         {displayColumns
           .filter((col: any) => !col.mobileHidden) // 過濾移動端隱藏列
           .map((col: any) => {
@@ -72,6 +72,7 @@ function ResponsiveTable<T extends object>({
       {/* Desktop Table */}
       <div className={`hidden md:block ${isMobile ? 'hidden' : 'block'}`}>
         <Table
+          rowKey={rowKey}
           columns={columns}
           dataSource={dataSource}
           pagination={false}

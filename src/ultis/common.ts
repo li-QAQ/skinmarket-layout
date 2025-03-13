@@ -24,7 +24,46 @@ export const numberCarry = (num: number, length: number = 0): number => {
   return Math.floor(num * mantissa) / mantissa;
 };
 
-// 數字1000 => 1,000， 以此類推
-export const ThousandSymbolFormat = (num: number): string => {
-  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+/**
+ * Format number with thousands separator and optional decimal places
+ * @param value - The number to format
+ * @param decimals - Number of decimal places (default: 0)
+ * @returns Formatted string with thousands separators
+ */
+export const formatNumber = (
+  value: number | undefined | null,
+  decimals: number = 0,
+): string => {
+  // Handle undefined, null, NaN or invalid values
+  if (value === undefined || value === null || isNaN(Number(value))) return '0';
+
+  // Ensure value is a number
+  const numValue = Number(value);
+
+  // Format with specified decimal places
+  const formattedValue =
+    decimals > 0 ? numValue.toFixed(decimals) : Math.floor(numValue).toString();
+
+  // Add thousands separators
+  return formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+/**
+ * InputNumber formatter - Adds thousands separators to displayed value
+ * @param value - The number to format
+ * @returns Formatted string with thousands separators
+ */
+export const numberFormatter = (value: number | undefined): string => {
+  if (value === undefined || value === null) return '';
+  return `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+/**
+ * InputNumber parser - Removes thousands separators for processing
+ * @param value - The formatted string to parse
+ * @returns Clean string without separators
+ */
+export const numberParser = (value: string | undefined): string => {
+  if (value === undefined || value === null) return '';
+  return value.replace(/\$\s?|(,*)/g, '');
 };

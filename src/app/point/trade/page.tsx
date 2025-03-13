@@ -2,113 +2,118 @@
 
 import { Button } from 'antd';
 import { useEffect, useState } from 'react';
-import { numberCarry, ThousandSymbolFormat } from '@/ultis/common';
+import { ShoppingCartOutlined } from '@ant-design/icons';
 
 import Api from '@/api';
 import usePointStore from '@/store/point';
 import useInfoStore from '@/store/info';
 import SellModal from './sell';
-import ResponsiveTable from '@/components/ResponsiveTable';
+import PointOrderCard, { PointOrderItem } from '@/components/PointOrderCard';
+import PointCardList from '@/components/PointCardList';
 
-const SellPage = () => {
-  const [data, setData] = useState({
-    id: 0,
-    price: 0,
-  });
-  const [isOpen, setIsOpen] = useState(false);
+// Define the type expected by the SellModal
+interface SellModalData {
+  id: number;
+  price: number;
+  member_id?: string;
+  quantity?: number;
+  description?: string;
+}
+
+const TradePage = () => {
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState<SellModalData | null>(
+    null,
+  );
+  const [isSellModalOpen, setIsSellModalOpen] = useState(false);
+  const pageSize = 9;
+
+  const acquisition_order = usePointStore(
+    (state) => state.acquisition_order,
+  ) as PointOrderItem[];
   const member_id = useInfoStore((state) => state.member_id);
-
-  const acquisition_order = usePointStore((state) => state.acquisition_order);
   const set_acquisition_order = usePointStore(
     (state) => state.set_acquisition_order,
   );
 
   useEffect(() => {
-    Api.Market.get_point_acquisition().then((res) => {
-      set_acquisition_order(res.data);
-    });
+    loadOrders();
   }, []);
 
-  const columns: any = [
-    {
-      title: '買家',
-      dataIndex: 'member_id',
-      key: 'member_id',
-    },
-    {
-      title: '數量',
-      dataIndex: 'quantity',
-      key: 'quantity',
-      align: 'right',
-      render: (quantity: number) => {
-        if (quantity === -1) {
-          return '∞';
-        } else {
-          return ThousandSymbolFormat(quantity);
-        }
-      },
-    },
-    {
-      title: '單價',
-      dataIndex: 'price',
-      key: 'price',
-      align: 'right',
-      render: (price: number) => `NT ${numberCarry(price, 2).toFixed(2)}`,
-    },
-    {
-      title: '合計',
-      dataIndex: 'total',
-      key: 'total',
-      align: 'right',
-      render: (_: any, record: any) => {
-        if (record.quantity === -1) {
-          return '∞';
-        }
-        return `NT ${ThousandSymbolFormat(record.price * record.quantity)}`;
-      },
-    },
-    {
-      title: '備註',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: '交易',
-      key: 'action',
-      width: 200,
-      render: (_: any, record: any) => {
-        return (
-          member_id !== record.member_id && (
-            <Button
-              type="primary"
-              danger
-              onClick={() => {
-                setIsOpen(true);
-                setData(record);
-              }}
-            >
-              出售
-            </Button>
-          )
-        );
-      },
-    },
-  ];
+  const loadOrders = () => {
+    setLoading(true);
+    Api.Market.get_point_acquisition()
+      .then((res) => {
+        set_acquisition_order(res.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleSellClick = (order: PointOrderItem) => {
+    // Convert PointOrderItem to SellModalData
+    setSelectedOrder({
+      id: order.id || 0,
+      price: order.price,
+      member_id: order.member_id,
+      quantity: order.quantity,
+      description: order.description,
+    });
+    setIsSellModalOpen(true);
+  };
+
+  // Filter out orders from the current user
+  const filteredOrders = acquisition_order?.filter(
+    (order) => order.member_id !== member_id,
+  );
+
+  const renderOrderCard = (item: PointOrderItem, index: number) => (
+    <PointOrderCard
+      key={item.id || index}
+      item={item}
+      showMemberId={true}
+      actionButton={
+        <Button
+          type="primary"
+          icon={<ShoppingCartOutlined />}
+          className="w-full"
+          onClick={() => handleSellClick(item)}
+        >
+          出售點數
+        </Button>
+      }
+    />
+  );
 
   return (
-    <>
-      <SellModal open={isOpen} setOpen={setIsOpen} data={data} />
-
-      <ResponsiveTable
-        pagination={{
-          pageSize: 9,
-        }}
-        rowKey="id"
-        columns={columns}
-        dataSource={acquisition_order}
+    <div>
+      <PointCardList
+        items={filteredOrders}
+        loading={loading}
+        title="點數交易市場"
+        description="在這裡您可以查看其他用戶發布的點數收購訂單，並向他們出售您的點數。"
+        emptyText="目前沒有可用的收購訂單"
+        renderItem={renderOrderCard}
+        showPagination={filteredOrders?.length > pageSize}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
       />
-    </>
+
+      {/* Sell Modal */}
+      <SellModal
+        open={isSellModalOpen}
+        setOpen={setIsSellModalOpen}
+        data={selectedOrder || { id: 0, price: 0 }}
+      />
+    </div>
   );
 };
 
-export default SellPage;
+export default TradePage;

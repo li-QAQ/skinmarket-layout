@@ -1,26 +1,41 @@
 'use client';
 import Api from '@/api';
-import ResponsiveTable from '@/components/ResponsiveTable';
+import useInfoStore from '@/store/info';
 import { formatNumber } from '@/ultis/common';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import ResponsiveTable from '@/components/ResponsiveTable';
 
-const PointTransactionHistoryPage = () => {
-  const columns: any = [
+const BuyerFailedPage = () => {
+  const member_id = useInfoStore((state) => state.member_id);
+
+  const failedColumns: any = [
     {
       title: '訂單編號',
       dataIndex: 'id',
-      render: (id: number, record: any) =>
-        record.reference_type === 'PointOrder' ? `O_${id}` : `A_${id}`,
     },
     {
-      title: '請求編號',
+      title: '交易編號',
       dataIndex: 'reference_id',
     },
-    // {
-    //   title: '交易類型',
-    //   dataIndex: 'reference_type',
-    // },
+    {
+      title: '失敗原因',
+      dataIndex: 'reference_type',
+      render: (reference_type: string, record: any) => {
+        if (reference_type === 'PointOrder' && member_id === record.buyer_id) {
+          return '對方拒絕';
+        }
+
+        if (
+          reference_type === 'PointAcquisition' &&
+          member_id === record.buyer_id
+        ) {
+          return '被我拒絕';
+        }
+
+        return '未知原因';
+      },
+    },
     {
       title: '數量',
       dataIndex: 'quantity',
@@ -53,32 +68,31 @@ const PointTransactionHistoryPage = () => {
   const [data, setData] = useState<
     {
       id: number;
-      reference_type: string;
-      reference_id: number;
-      seller_id: string;
-      buyer_id: string;
+      price: number;
       quantity: number;
-      total_price: number;
+      trader: string;
+      action: number;
       created_at: string;
+      status: number;
     }[]
-  >([]);
+  >();
 
   useEffect(() => {
-    Api.Member.get_point_transaction_history().then((res) => {
+    Api.Member.get_point_confirm_failed_buyer().then((res) => {
       setData(res.data);
     });
   }, []);
 
   return (
     <ResponsiveTable
-      rowKey="id"
       pagination={{
         pageSize: 8,
       }}
-      columns={columns}
-      dataSource={data}
+      rowKey="id"
+      dataSource={data as any}
+      columns={failedColumns}
     />
   );
 };
 
-export default PointTransactionHistoryPage;
+export default BuyerFailedPage;

@@ -43,6 +43,7 @@ export default function ChildrenLayout({
           <div
             style={{
               height: 'calc(100% - 96px)',
+              marginTop: '96px',
             }}
             className="max-md:px-2"
           >

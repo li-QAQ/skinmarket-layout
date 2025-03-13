@@ -1,7 +1,7 @@
 'use client';
 import Api from '@/api';
 import ResponsiveTable from '@/components/ResponsiveTable';
-import { ThousandSymbolFormat } from '@/ultis/common';
+import { formatNumber } from '@/ultis/common';
 import { Button } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
@@ -21,13 +21,13 @@ const PointTransactionConfirmPage = () => {
     {
       title: '數量',
       dataIndex: 'quantity',
-      render: (quantity: number) => ThousandSymbolFormat(quantity),
+      render: (quantity: number) => formatNumber(quantity),
       align: 'right',
     },
     {
       title: '總額',
       dataIndex: 'total_price',
-      render: (total_price: number) => ` ${ThousandSymbolFormat(total_price)}`,
+      render: (total_price: number) => ` ${formatNumber(total_price)}`,
       align: 'right',
     },
     {

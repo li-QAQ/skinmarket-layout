@@ -15,12 +15,27 @@ const Point = (props: PointsProps) => {
     router.push(key);
   };
 
+  // Determine which tab should be active based on the current path
+  const getActiveKey = (tabKeys: string[]) => {
+    for (const key of tabKeys) {
+      if (pathname === key || pathname.includes(key + '/')) {
+        return key;
+      }
+    }
+    return pathname;
+  };
+
+  // Define tab keys for each tab group
+  const leftTabKeys = ['/point/trade'];
+  const rightTabKeys = ['/point/order', '/point/transaction'];
+
   return (
     <div className="max-w-screen-xl mx-auto my-4">
       <div className="flex">
         <Tabs
           className="w-full"
-          activeKey={pathname}
+          size="large"
+          activeKey={getActiveKey(leftTabKeys)}
           items={[
             {
               key: '/point/trade',
@@ -31,7 +46,8 @@ const Point = (props: PointsProps) => {
         />
         <Tabs
           className="w-auto"
-          activeKey={pathname}
+          size="large"
+          activeKey={getActiveKey(rightTabKeys)}
           items={[
             {
               key: '/point/order',

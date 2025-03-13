@@ -1,124 +1,116 @@
 'use client';
 
 import { Button, Popconfirm } from 'antd';
-import { useEffect } from 'react';
-import { numberCarry, ThousandSymbolFormat } from '@/ultis/common';
+import { useEffect, useState } from 'react';
+import { DeleteOutlined } from '@ant-design/icons';
+
 import Api from '@/api';
 import usePointStore from '@/store/point';
 import useMessageStore from '@/store/message';
-import ResponsiveTable from '@/components/ResponsiveTable';
+import PointOrderCard, { PointOrderItem } from '@/components/PointOrderCard';
+import PointCardList from '@/components/PointCardList';
 
 const PointOrderSell = () => {
-  const point_order = usePointStore((state) => state.point_order);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 9;
+
+  const point_order = usePointStore(
+    (state) => state.point_order,
+  ) as (PointOrderItem & { id: number })[];
   const setMsg = useMessageStore((state) => state.setData);
   const set_point_order = usePointStore((state) => state.set_point_order);
 
   const cancelOrder = (id: string) => {
-    Api.Market.del_point_order({ point_order_id: id }).then(async () => {
-      await Api.Member.get_point_order().then((res) => {
-        set_point_order(res.data);
-      });
+    setLoading(true);
+    Api.Market.del_point_order({ point_order_id: id })
+      .then(async () => {
+        await Api.Member.get_point_order().then((res) => {
+          set_point_order(res.data);
+        });
 
-      setMsg({
-        show: true,
-        content: '出售訂單取消成功',
-        type: 'success',
+        setMsg({
+          show: true,
+          content: '出售訂單取消成功',
+          type: 'success',
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    });
   };
 
   useEffect(() => {
-    Api.Member.get_point_order().then((res) => {
-      set_point_order(res.data);
-    });
+    loadOrders();
   }, []);
 
+  const loadOrders = () => {
+    setLoading(true);
+    Api.Member.get_point_order()
+      .then((res) => {
+        set_point_order(res.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderOrderCard = (item: PointOrderItem, index: number) => (
+    <PointOrderCard
+      key={item.id || index}
+      item={item}
+      showMemberId={false}
+      showStatus={true}
+      actionButton={
+        item.status === 0 ? (
+          <Popconfirm
+            title="確定要取消此訂單嗎？"
+            description="此操作不可逆"
+            okText="是"
+            cancelText="否"
+            onConfirm={() => cancelOrder((item as any).id.toString())}
+          >
+            <Button
+              type="primary"
+              danger
+              icon={<DeleteOutlined />}
+              className="w-full"
+            >
+              取消訂單
+            </Button>
+          </Popconfirm>
+        ) : (
+          <Button
+            type="primary"
+            onClick={() => cancelOrder((item as any).id.toString())}
+            className="w-full"
+          >
+            刪除記錄
+          </Button>
+        )
+      }
+    />
+  );
+
   return (
-    <>
-      <ResponsiveTable
-        rowKey="id"
-        columns={[
-          {
-            title: '數量',
-            dataIndex: 'quantity',
-            key: 'quantity',
-            align: 'right',
-            render: (quantity: number) => {
-              if (quantity === -1) {
-                return '∞';
-              } else {
-                return ThousandSymbolFormat(quantity);
-              }
-            },
-          },
-          {
-            title: '單價',
-            dataIndex: 'price',
-            key: 'price',
-            align: 'right',
-            render: (price: number) => `NT ${numberCarry(price, 2).toFixed(2)}`,
-          },
-          {
-            title: '合計',
-            dataIndex: 'total',
-            key: 'total',
-            align: 'right',
-            render: (_: any, record: any) => {
-              if (record.quantity === -1) {
-                return '∞';
-              }
-              return `NT ${ThousandSymbolFormat(record.price * record.quantity)}`;
-            },
-          },
-          {
-            title: '狀態',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status: number) => {
-              if (status === 1) {
-                return '已完成';
-              }
-              return '進行中';
-            },
-          },
-          {
-            title: '備註',
-            dataIndex: 'description',
-            key: 'description',
-          },
-          {
-            title: '操作',
-            key: 'action',
-            width: 200,
-            render: (_: any, record: any) => {
-              return (
-                <Popconfirm
-                  title="確定要刪除記錄嗎?"
-                  description="此操作不可逆"
-                  okText="是"
-                  cancelText="否"
-                  onConfirm={() => {
-                    cancelOrder(record.id);
-                  }}
-                >
-                  {record.status === 1 ? (
-                    <Button type="primary">刪除記錄</Button>
-                  ) : (
-                    <Button type="primary" danger>
-                      取消
-                    </Button>
-                  )}
-                </Popconfirm>
-              );
-            },
-          },
-        ]}
-        dataSource={point_order}
-        pagination={{
-          position: ['bottomCenter'],
-        }}
+    <div>
+      <PointCardList
+        items={point_order}
+        loading={loading}
+        title="我的點數訂單"
+        description="在這裡您可以查看和管理您的點數訂單。"
+        emptyText="您還沒有任何點數訂單"
+        renderItem={renderOrderCard}
+        showPagination={point_order?.length > pageSize}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
       />
-    </>
+    </div>
   );
 };
 

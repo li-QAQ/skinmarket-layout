@@ -10,7 +10,7 @@ export default function Home() {
     router.push('/point/trade');
   }, []);
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center max-h-screen">
       <div className="flex flex-col items-center">
         <div>驗證登入……</div>
         <Spin indicator={<LoadingOutlined spin />} size="large" />

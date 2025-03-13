@@ -1,6 +1,5 @@
 'use client';
 import { Tabs } from 'antd';
-
 import { usePathname, useRouter } from 'next/navigation';
 
 const Profile = ({ children }: { children?: React.ReactNode }) => {
@@ -23,8 +22,8 @@ const Profile = ({ children }: { children?: React.ReactNode }) => {
   ];
 
   return (
-    <div className="max-w-screen-xl flex items-center  mx-auto">
-      <div className="bg-[var(--secondary)] w-full rounded-md">
+    <div className="w-full max-w-screen-xl mx-auto">
+      <div className="bg-[var(--secondary)] w-full rounded-lg shadow-sm overflow-hidden">
         <Tabs
           activeKey={pathname}
           className="w-full font-bold"
@@ -32,9 +31,13 @@ const Profile = ({ children }: { children?: React.ReactNode }) => {
             router.push(value);
           }}
           items={items}
+          size="large"
+          tabBarStyle={{
+            margin: '0 16px',
+          }}
         />
 
-        {children}
+        <div className="p-4 sm:p-6 md:p-8">{children}</div>
       </div>
     </div>
   );
