@@ -33,14 +33,14 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
 
   // Watch form values for summary
   const [price, setPrice] = useState<number>(1);
-  const [quantity, setQuantity] = useState<number>(point || 0);
-  const [amount, setAmount] = useState<number>(point || 0);
+  const [quantity, setQuantity] = useState<number>(0);
+  const [amount, setAmount] = useState<number>(0);
 
   // Initialize form values when modal opens or point changes
   useEffect(() => {
-    if (props.open && point) {
+    if (props.open) {
       const initialPrice = 1;
-      const initialQuantity = point;
+      const initialQuantity = Number(point) || 0;
       const initialAmount = initialPrice * initialQuantity;
 
       // Update state
@@ -63,6 +63,16 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
     quantity: number;
     description: string;
   }) => {
+    // Validate point balance before submission
+    if (!point || Number(point) <= 0) {
+      setData({
+        show: true,
+        content: '您的點數餘額不足，無法發布訂單',
+        type: 'error',
+      });
+      return;
+    }
+
     try {
       await Api.Market.post_point_order({
         price: values.price,
@@ -102,18 +112,21 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
 
   // Handle quantity change from input or slider
   const handleQuantityChange = (value: number | null) => {
-    if (!value || value <= 0) return;
+    if (!value || value < 0) return;
+
+    const maxQuantity = Number(point) || 0;
+    const adjustedValue = Math.min(value, maxQuantity);
 
     // Update state
-    setQuantity(value);
+    setQuantity(adjustedValue);
 
     // Calculate and update amount
-    const newAmount = price * value;
+    const newAmount = price * adjustedValue;
     setAmount(newAmount);
 
     // Update form fields
     form.setFieldsValue({
-      quantity: value,
+      quantity: adjustedValue,
       amount: newAmount,
     });
   };
@@ -125,7 +138,10 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
     setAmount(value);
 
     if (price > 0) {
-      const newQuantity = Math.floor(value / price);
+      const newQuantity = Math.min(
+        Math.floor(value / price),
+        Number(point) || 0,
+      );
       setQuantity(newQuantity);
       form.setFieldsValue({ quantity: newQuantity });
     }
@@ -133,38 +149,42 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
 
   // Slider change handler
   const handleSliderChange = (value: number) => {
-    if (value <= 0) return;
+    if (value < 0) return;
+
+    const maxQuantity = Number(point) || 0;
+    const adjustedValue = Math.min(value, maxQuantity);
 
     // Update quantity state
-    setQuantity(value);
+    setQuantity(adjustedValue);
 
     // Calculate new amount
-    const newAmount = price * value;
+    const newAmount = price * adjustedValue;
     setAmount(newAmount);
 
     // Update form fields
     form.setFieldsValue({
-      quantity: value,
+      quantity: adjustedValue,
       amount: newAmount,
     });
   };
 
   // Generate slider marks
   const getSliderMarks = () => {
-    if (!point || point <= 0) return { 0: '0' };
+    const maxPoint = Number(point) || 0;
+    if (maxPoint <= 0) return { 0: '0' };
 
     const marks: Record<number, string> = {
-      1: '1',
+      0: '0',
     };
 
     // Add middle mark if point is large enough
-    if (point >= 4) {
-      const middlePoint = Math.floor(point / 2);
+    if (maxPoint >= 4) {
+      const middlePoint = Math.floor(maxPoint / 2);
       marks[middlePoint] = `${middlePoint}`;
     }
 
     // Add max mark
-    marks[point] = `${point}`;
+    marks[maxPoint] = `${maxPoint}`;
 
     return marks;
   };
@@ -186,6 +206,14 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
         props.setOpen(false);
       }}
       onOk={() => {
+        if (!point || Number(point) <= 0) {
+          setData({
+            show: true,
+            content: '您的點數餘額不足，無法發布出售訂單',
+            type: 'error',
+          });
+          return;
+        }
         form.submit();
       }}
     >
@@ -193,8 +221,8 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
         form={form}
         initialValues={{
           price: 1,
-          quantity: point,
-          amount: point,
+          quantity: 0,
+          amount: 0,
         }}
         onFinish={onFinish}
         layout="vertical"
@@ -213,6 +241,11 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
                   required: true,
                   message: '請輸入定價',
                 },
+                {
+                  type: 'number',
+                  min: 0.01,
+                  message: '定價必須大於0',
+                },
               ]}
               name="price"
             >
@@ -227,17 +260,43 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
                 onChange={handlePriceChange}
                 formatter={numberFormatter}
                 parser={(value) => parseFloat(numberParser(value))}
+                disabled={!point || Number(point) <= 0}
               />
             </Form.Item>
           </Col>
 
           <Col span={24}>
             <Form.Item
-              label="點數數量"
+              label={
+                <div className="flex items-center justify-between w-full">
+                  <span>點數數量</span>
+                  <Text type="secondary" className="text-sm">
+                    您擁有: {formatNumber(Number(point) || 0)} 點
+                  </Text>
+                </div>
+              }
               rules={[
                 {
                   required: true,
                   message: '請輸入點數',
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '點數不能為負數',
+                },
+                {
+                  validator: (_, value) => {
+                    if (!point || Number(point) <= 0) {
+                      return Promise.reject('您的點數餘額不足');
+                    }
+                    if (value > Number(point)) {
+                      return Promise.reject(
+                        `出售數量不能超過您擁有的點數 ${formatNumber(Number(point))}`,
+                      );
+                    }
+                    return Promise.resolve();
+                  },
                 },
               ]}
               name="quantity"
@@ -246,20 +305,21 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
                 style={{
                   width: '100%',
                 }}
-                min={1}
-                max={point}
+                min={0}
+                max={Number(point) || 0}
                 onChange={handleQuantityChange}
-                addonAfter={`/ ${formatNumber(point || 0)} 點`}
+                addonAfter={`/ ${formatNumber(Number(point) || 0)} 點`}
                 value={quantity}
                 formatter={numberFormatter}
                 parser={(value) => parseFloat(numberParser(value))}
+                disabled={!point || Number(point) <= 0}
               />
             </Form.Item>
 
             <Form.Item noStyle>
               <Slider
-                min={1}
-                max={point || 1}
+                min={0}
+                max={Number(point) || 1}
                 value={quantity}
                 onChange={handleSliderChange}
                 tooltip={{
@@ -274,6 +334,7 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
                 styles={{
                   track: { backgroundColor: '#c9a86b' },
                 }}
+                disabled={!point || Number(point) <= 0}
               />
             </Form.Item>
           </Col>
@@ -291,6 +352,11 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
                   required: true,
                   message: '請輸入總額',
                 },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '總額不能為負數',
+                },
               ]}
               name="amount"
             >
@@ -298,16 +364,27 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
                 style={{
                   width: '100%',
                 }}
-                min={0.01}
+                min={0}
                 precision={2}
                 addonAfter="NT$"
                 onChange={handleAmountChange}
                 value={amount}
                 formatter={numberFormatter}
                 parser={(value) => parseFloat(numberParser(value))}
+                disabled={!point || Number(point) <= 0}
               />
             </Form.Item>
           </Col>
+
+          {(!point || Number(point) <= 0) && (
+            <Col span={24}>
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900/30 rounded-lg p-4 mb-4">
+                <Text type="warning">
+                  您當前沒有可用的點數餘額，無法發布出售訂單。
+                </Text>
+              </div>
+            </Col>
+          )}
 
           <Col span={24}>
             <Form.Item
@@ -322,6 +399,7 @@ const BuyPublishModal = (props: BuyPublishModalProps) => {
               <Input.TextArea
                 placeholder="添加關於此交易的備註信息（選填）"
                 autoSize={{ minRows: 2, maxRows: 4 }}
+                disabled={!point || Number(point) <= 0}
               />
             </Form.Item>
           </Col>

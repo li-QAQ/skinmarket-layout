@@ -11,6 +11,8 @@ import {
   Space,
   Tooltip,
   Badge,
+  Modal,
+  Image,
 } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
@@ -29,6 +31,23 @@ const RequestPage = () => {
   const member_id = useInfoStore((state) => state.member_id);
   const setMessage = useMessageStore((state) => state.setData);
   const [loading, setLoading] = useState(true);
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [currentProofImage, setCurrentProofImage] = useState('');
+
+  // 处理查看付款证明
+  const handleViewProofImage = (proofImage: string) => {
+    if (!proofImage) {
+      setMessage({
+        show: true,
+        content: '付款證明不存在',
+        type: 'error',
+      });
+      return;
+    }
+
+    setCurrentProofImage(proofImage);
+    setImageModalVisible(true);
+  };
 
   const getStatusTag = (status: number) => {
     if (status === 0) {
@@ -113,15 +132,16 @@ const RequestPage = () => {
     {
       title: '付款證明',
       dataIndex: 'status',
-      render: (status: number) => {
+      render: (_: any, record: any) => {
         return (
           <Space>
-            {getStatusTag(status)}
-            {status >= 3 && (
+            {getStatusTag(record.status)}
+            {record.status >= 3 && (
               <Tooltip title="查看付款證明">
-                <Badge dot={status === 3}>
+                <Badge dot={record.status === 3}>
                   <FileImageOutlined
                     style={{ fontSize: '16px', cursor: 'pointer' }}
+                    onClick={() => handleViewProofImage(record.proof_image)}
                   />
                 </Badge>
               </Tooltip>
@@ -287,6 +307,7 @@ const RequestPage = () => {
       action: number;
       created_at: string;
       status: number;
+      proof_image?: string;
     }[]
   >();
 
@@ -301,6 +322,20 @@ const RequestPage = () => {
         setLoading(false);
       });
   }, []);
+
+  // 构建完整的图片URL
+  const getFullImageUrl = (path: string) => {
+    if (!path) return '';
+
+    // 检查是否已经是完整URL
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+
+    // 根据您的API配置构建URL
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    return `${baseUrl}/${path}`;
+  };
 
   return (
     <div className="mt-4">
@@ -344,6 +379,31 @@ const RequestPage = () => {
           scroll={{ x: 'max-content' }}
         />
       </Space>
+
+      {/* 付款证明查看模态框 */}
+      <Modal
+        title="付款證明"
+        open={imageModalVisible}
+        onCancel={() => setImageModalVisible(false)}
+        footer={null}
+        width={800}
+        centered
+      >
+        <div className="flex justify-center">
+          {currentProofImage ? (
+            <Image
+              src={getFullImageUrl(currentProofImage)}
+              alt="付款證明"
+              style={{ maxWidth: '100%', maxHeight: '70vh' }}
+            />
+          ) : (
+            <div className="flex justify-center items-center">
+              <LoadingOutlined style={{ fontSize: 24 }} spin />
+              <span className="ml-2">加載圖片中...</span>
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 };

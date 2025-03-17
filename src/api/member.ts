@@ -97,7 +97,7 @@ const get_kyc = () => {
 const post_kyc = (data: any) => {
   const MERCHANT_ID = getMerchantId();
   const MEMBER_ID = getMemberId();
-  return apiClient.post(`/${MERCHANT_ID}/member/${MEMBER_ID}/kyc`, data);
+  return apiClient.put(`/${MERCHANT_ID}/member/${MEMBER_ID}/kyc`, data);
 };
 
 // 取得銀行賬戶

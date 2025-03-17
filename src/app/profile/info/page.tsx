@@ -26,24 +26,78 @@ const ProfileInfo = () => {
 
   const kycTour: boolean = useTourStore((state) => state.kycTour);
   const setKycTour = useTourStore((state) => state.setKycTour);
-  const ref1 = useRef(null);
+
+  // 创建两个引用，分别用于桌面版和移动版的验证按钮
+  const desktopRef = useRef(null);
+  const mobileRef = useRef(null);
+
+  // 根据屏幕宽度动态选择正确的引用
+  const getTargetRef = () => {
+    // 如果在客户端且窗口宽度小于 768px，使用移动版引用
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return mobileRef;
+    }
+    // 否则使用桌面版引用
+    return desktopRef;
+  };
+
   const steps: TourProps['steps'] = [
     {
       title: 'KYC 實名驗證',
       description: '點擊"驗證按鈕"進行實名驗證。',
-      target: () => ref1.current,
+      target: () => getTargetRef().current,
     },
   ];
 
+  // 刷新用户令牌
+  const refreshUserToken = async () => {
+    try {
+      // 从 localStorage 获取 refresh_token
+      const refreshToken = localStorage.getItem('token');
+
+      if (!refreshToken) {
+        console.error('No refresh token found');
+        return false;
+      }
+
+      // 调用 refresh_token API
+      const response = await Api.Auth.refresh_token({
+        refresh_token: refreshToken,
+      });
+
+      // 获取新的 access_token 并更新到 localStorage
+      if (response && response.data && response.data.access_token) {
+        localStorage.setItem('token', response.data.access_token);
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      return false;
+    }
+  };
+
   useEffect(() => {
+    // 获取 KYC 信息
     Api.Member.get_kyc()
       .then((res) => {
         setKyc(res.data);
+
+        // 如果 KYC 状态为 1（已验证），刷新令牌
+        if (res.data && res.data.status === 1) {
+          console.log('KYC status is 1, refreshing token...');
+          refreshUserToken();
+        }
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
+
+  // 只有当 KYC 未完成且页面加载完成时才显示引导
+  const shouldShowTour = kycTour && !loading && !kyc;
 
   if (loading) {
     // 資料還沒回來時，用 Skeleton 占位符，不讓內容閃爍
@@ -53,6 +107,13 @@ const ProfileInfo = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-bold mb-4">賬戶信息</h2>
+
+      {/* Tour 组件放在外层，确保在任何视图下都能正确显示 */}
+      <Tour
+        open={shouldShowTour}
+        onClose={() => setKycTour(false)}
+        steps={steps}
+      />
 
       {/* Desktop View */}
       <div className="hidden md:block">
@@ -78,19 +139,13 @@ const ProfileInfo = () => {
             </>
           )}
 
-          <Tour
-            open={kycTour}
-            onClose={() => setKycTour(false)}
-            steps={steps}
-          />
-
           <div className="flex items-center py-3">
             <div className="w-1/4 text-gray-400">KYC 實名</div>
             <div className="w-3/4">
               <KYCModal open={isOpenKYC} setOpen={setIsOpenKYC} />
               {!kyc && (
                 <Button
-                  ref={ref1}
+                  ref={desktopRef}
                   type="primary"
                   ghost
                   onClick={() => setIsOpenKYC(true)}
@@ -153,7 +208,7 @@ const ProfileInfo = () => {
               <KYCModal open={isOpenKYC} setOpen={setIsOpenKYC} />
               {!kyc && (
                 <Button
-                  ref={ref1}
+                  ref={mobileRef}
                   type="primary"
                   ghost
                   onClick={() => setIsOpenKYC(true)}

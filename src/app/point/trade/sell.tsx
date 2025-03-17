@@ -65,10 +65,16 @@ const SellModal = (props: SellModalProps) => {
   // Initialize form values when modal opens or price/point changes
   useEffect(() => {
     if (props.open) {
-      const initialQuantity = Math.min(
-        Number(point) || 0,
-        Number(props.data?.quantity) || Infinity,
-      );
+      // For infinite mode (quantity = -1), only limit by user's points
+      const maxQuantity =
+        props.data?.quantity === -1
+          ? Number(point) || 0
+          : Math.min(
+              Number(point) || 0,
+              Number(props.data?.quantity) || Infinity,
+            );
+
+      const initialQuantity = maxQuantity;
       const initialAmount = initialQuantity * (Number(props.data?.price) || 0);
 
       setQuantity(initialQuantity);
@@ -85,23 +91,29 @@ const SellModal = (props: SellModalProps) => {
   const handleQuantityChange = (value: number | null) => {
     if (!value || value <= 0) return;
 
+    let adjustedValue = value;
+
     // Check if quantity exceeds user's available points
-    if (point && value > Number(point)) {
-      value = Number(point);
+    if (point && adjustedValue > Number(point)) {
+      adjustedValue = Number(point);
     }
 
-    // Check if quantity exceeds buyer's requested quantity
-    if (props.data.quantity && value > Number(props.data.quantity)) {
-      value = Number(props.data.quantity);
+    // Check if quantity exceeds buyer's requested quantity (skip check if quantity is -1)
+    if (
+      props.data.quantity !== -1 &&
+      props.data.quantity &&
+      adjustedValue > Number(props.data.quantity)
+    ) {
+      adjustedValue = Number(props.data.quantity);
     }
 
-    setQuantity(value);
+    setQuantity(adjustedValue);
 
     // Calculate new amount
     const validPrice = Number(props.data?.price) || 0;
-    const newAmount = value * validPrice;
+    const newAmount = adjustedValue * validPrice;
     setAmount(newAmount);
-    form.setFieldsValue({ quantity: value, amount: newAmount });
+    form.setFieldsValue({ quantity: adjustedValue, amount: newAmount });
   };
 
   const handleAmountChange = (value: number | null) => {
@@ -125,8 +137,12 @@ const SellModal = (props: SellModalProps) => {
       form.setFieldsValue({ amount: adjustedAmount });
     }
 
-    // Check if quantity exceeds buyer's requested quantity
-    if (props.data.quantity && newQuantity > Number(props.data.quantity)) {
+    // Check if quantity exceeds buyer's requested quantity (skip check if quantity is -1)
+    if (
+      props.data.quantity !== -1 &&
+      props.data.quantity &&
+      newQuantity > Number(props.data.quantity)
+    ) {
       newQuantity = Number(props.data.quantity);
       const adjustedAmount = newQuantity * validPrice;
       setAmount(adjustedAmount);
@@ -162,8 +178,12 @@ const SellModal = (props: SellModalProps) => {
       return;
     }
 
-    // Check if quantity exceeds buyer's requested quantity
-    if (props.data.quantity && values.quantity > Number(props.data.quantity)) {
+    // Check if quantity exceeds buyer's requested quantity (skip check if quantity is -1)
+    if (
+      props.data.quantity !== -1 &&
+      props.data.quantity &&
+      values.quantity > Number(props.data.quantity)
+    ) {
       setData({
         show: true,
         content: `出售數量不能超過買家需求量 ${formatNumber(Number(props.data.quantity))}`,
@@ -203,14 +223,24 @@ const SellModal = (props: SellModalProps) => {
   // Ensure price is a valid number for display
   const displayPrice = Number(props.data?.price) || 0;
 
+  // Calculate max sellable quantity
+  const maxSellable =
+    props.data?.quantity === -1
+      ? Number(point) || 0
+      : Math.min(Number(point) || 0, Number(props.data?.quantity) || Infinity);
+
   // Quick quantity buttons
   const renderQuickQuantityButtons = () => {
     if (!point || Number(point) <= 0) return null;
 
-    const maxSellable = Math.min(
-      Number(point) || 0,
-      Number(props.data?.quantity) || Infinity,
-    );
+    const maxSellable =
+      props.data?.quantity === -1
+        ? Number(point) || 0
+        : Math.min(
+            Number(point) || 0,
+            Number(props.data?.quantity) || Infinity,
+          );
+
     const options = [1, 10, 100];
 
     // Add half and full options if they make sense
@@ -243,18 +273,13 @@ const SellModal = (props: SellModalProps) => {
 
   // Calculate percentage of quantity selected relative to buyer's requested quantity
   const getBuyerRequestPercentage = () => {
+    if (props.data.quantity === -1) return 100;
     if (!props.data.quantity || Number(props.data.quantity) === 0) return 100;
     return Math.min(
       100,
       Math.round((quantity / Number(props.data.quantity)) * 100),
     );
   };
-
-  // Calculate max sellable quantity
-  const maxSellable = Math.min(
-    Number(point) || 0,
-    Number(props.data?.quantity) || Infinity,
-  );
 
   return (
     <Modal
@@ -335,9 +360,13 @@ const SellModal = (props: SellModalProps) => {
                     <Text type="secondary" className="text-sm mr-2">
                       您擁有: {formatNumber(Number(point) || 0)} 點
                     </Text>
-                    {props.data.quantity && (
+                    {props.data.quantity && props.data.quantity !== -1 ? (
                       <Text type="secondary" className="text-sm">
                         買家需求: {formatNumber(Number(props.data.quantity))} 點
+                      </Text>
+                    ) : (
+                      <Text type="secondary" className="text-sm">
+                        買家接受任意數量
                       </Text>
                     )}
                   </div>
@@ -362,6 +391,7 @@ const SellModal = (props: SellModalProps) => {
                       );
                     }
                     if (
+                      props.data.quantity !== -1 &&
                       props.data.quantity &&
                       value > Number(props.data.quantity)
                     ) {
@@ -397,13 +427,13 @@ const SellModal = (props: SellModalProps) => {
                   strokeColor="#c9a86b"
                   size="small"
                   format={() =>
-                    props.data.quantity
+                    props.data.quantity && props.data.quantity !== -1
                       ? `${formatNumber(quantity)}/${formatNumber(Number(props.data.quantity))}`
                       : `${formatNumber(quantity)}`
                   }
                 />
                 <div className="text-xs text-gray-500 mt-1 text-center">
-                  {props.data.quantity
+                  {props.data.quantity && props.data.quantity !== -1
                     ? `您將滿足買家 ${getBuyerRequestPercentage()}% 的需求量`
                     : '買家接受任意數量'}
                 </div>
