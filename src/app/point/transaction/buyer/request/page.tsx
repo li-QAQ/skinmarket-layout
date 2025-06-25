@@ -137,7 +137,7 @@ const BuyerRequestPage = () => {
     },
     {
       title: '操作',
-      dataIndex: 'status',
+      dataIndex: 'action',
       width: 280,
       render: (_: any, record: any) => {
         if (record.buyer_id == member_id) {

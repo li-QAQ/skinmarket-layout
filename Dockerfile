@@ -14,9 +14,13 @@ RUN npm ci --omit=dev --ignore-scripts
 
 # 複製專案原始碼並進行編譯
 COPY --chown=node:node . .
+
+# 傳入建置用的環境變數，這裡只用 ARG 就足夠了
 ARG NODE_ENV=production
+
 ARG NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+ARG NEXT_PUBLIC_IMG_URL
+
 RUN npm run build
 
 # 最終執行階段：使用 Distroless 極簡 Node.js 映像
@@ -32,7 +36,7 @@ COPY --from=builder /app/node_modules ./node_modules
 # 如有 Next.js 設定檔，將其複製
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
 
-# 設定運行時環境變數
+# 設定運行時環境變數（僅限 Node.js server-side 部分，如 SSR 或 API routes）
 ENV NODE_ENV=production 
 ENV PORT=3000
 

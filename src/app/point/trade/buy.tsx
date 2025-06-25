@@ -29,6 +29,7 @@ import {
   InfoCircleOutlined,
   ArrowRightOutlined,
 } from '@ant-design/icons';
+import { useSearchParams } from 'next/navigation';
 
 const { Text } = Typography;
 
@@ -46,11 +47,15 @@ interface BuyModalProps {
 
 const BuyModal = (props: BuyModalProps) => {
   const [form] = Form.useForm();
+  const searchParams = useSearchParams();
   const setData = useMessageStore((state) => state.setData);
   const [quantity, setQuantity] = useState<number>(1);
   const [maxQuantity, setMaxQuantity] = useState<number | undefined>(
     props.data?.quantity,
   );
+
+  // Get current page from URL or default to 1
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   // Ensure price is a valid number
   const price = props.data && props.data.price ? Number(props.data.price) : 0;
@@ -169,8 +174,15 @@ const BuyModal = (props: BuyModalProps) => {
           type: 'success',
         });
 
-        await Api.Market.get_point_order().then((res) => {
-          set_point_order(res.data);
+        await Api.Market.get_point_order({
+          limit: 12,
+          page: currentPage,
+        }).then((res) => {
+          if (res?.data?.data?.length > 0) {
+            set_point_order(res.data.data);
+          } else {
+            set_point_order([]);
+          }
         });
 
         props.setOpen(false);

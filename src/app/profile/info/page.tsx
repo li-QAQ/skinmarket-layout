@@ -61,7 +61,7 @@ const ProfileInfo = () => {
       }
 
       // 调用 refresh_token API
-      const response = await Api.Auth.refresh_token({
+      const response = await Api.Auth.auth_update({
         refresh_token: refreshToken,
       });
 

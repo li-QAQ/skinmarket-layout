@@ -137,6 +137,29 @@ const get_public_payment_method = (member_id: string) => {
   );
 };
 
+const get_notification = () => {
+  const MERCHANT_ID = getMerchantId();
+  const MEMBER_ID = getMemberId();
+  return apiClient.get(`/${MERCHANT_ID}/member/${MEMBER_ID}/notification`);
+};
+
+const patch_notification_mark_read = (data: { notification_ids: string[] }) => {
+  const MERCHANT_ID = getMerchantId();
+  const MEMBER_ID = getMemberId();
+  return apiClient.patch(
+    `/${MERCHANT_ID}/member/${MEMBER_ID}/notification/mark-read`,
+    data,
+  );
+};
+
+const patch_notification_mark_all_read = () => {
+  const MERCHANT_ID = getMerchantId();
+  const MEMBER_ID = getMemberId();
+  return apiClient.patch(
+    `/${MERCHANT_ID}/member/${MEMBER_ID}/notification/mark-all-read`,
+  );
+};
+
 const Member = {
   get_info,
   get_point_acquisition,
@@ -155,5 +178,8 @@ const Member = {
   del_bank,
   post_upload_receipt,
   get_public_payment_method,
+  get_notification,
+  patch_notification_mark_read,
+  patch_notification_mark_all_read,
 };
 export default Member;

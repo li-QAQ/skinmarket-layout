@@ -27,6 +27,7 @@ import {
   QuestionCircleOutlined,
   ArrowRightOutlined,
 } from '@ant-design/icons';
+import { useSearchParams } from 'next/navigation';
 
 const { Text } = Typography;
 
@@ -44,6 +45,7 @@ interface SellModalProps {
 
 const SellModal = (props: SellModalProps) => {
   const [form] = Form.useForm();
+  const searchParams = useSearchParams();
   const setData = useMessageStore((state) => state.setData);
   const set_acquisition_order = usePointStore(
     (state) => state.set_acquisition_order,
@@ -53,6 +55,9 @@ const SellModal = (props: SellModalProps) => {
   const [amount, setAmount] = useState<number>(
     (Number(point) || 0) * (Number(props.data?.price) || 0),
   );
+
+  // Get current page from URL or default to 1
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   const paymentOptions = [
     {
@@ -205,8 +210,15 @@ const SellModal = (props: SellModalProps) => {
           type: 'success',
         });
 
-        await Api.Market.get_point_acquisition().then((res) => {
-          set_acquisition_order(res.data);
+        await Api.Market.get_point_acquisition({
+          limit: 12,
+          page: currentPage,
+        }).then((res) => {
+          if (res?.data?.data?.length > 0) {
+            set_acquisition_order(res.data.data);
+          } else {
+            set_acquisition_order([]);
+          }
         });
 
         props.setOpen(false);

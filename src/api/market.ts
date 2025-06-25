@@ -1,9 +1,15 @@
 import apiClient from '@/ultis/api';
 import { getMerchantId } from '@/ultis/common';
 
-const get_point_acquisition = () => {
+const get_point_acquisition = (data: {
+  limit?: number;
+  page?: number;
+  cursor?: number;
+}) => {
   const MERCHANT_ID = getMerchantId();
-  return apiClient.get(`/${MERCHANT_ID}/market/point/acquisition`);
+  return apiClient.get(`/${MERCHANT_ID}/market/point/acquisition`, {
+    params: data,
+  });
 };
 interface PointAcquisition {
   description: string;
@@ -33,9 +39,15 @@ const del_point_acquisition = ({
   );
 };
 
-const get_point_order = () => {
+const get_point_order = (data: {
+  limit?: number;
+  page?: number;
+  cursor?: number;
+}) => {
   const MERCHANT_ID = getMerchantId();
-  return apiClient.get(`/${MERCHANT_ID}/market/point/order`);
+  return apiClient.get(`/${MERCHANT_ID}/market/point/order`, {
+    params: data,
+  });
 };
 interface BuyPointOrder {
   description: string;

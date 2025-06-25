@@ -158,7 +158,7 @@ const RequestPage = () => {
     },
     {
       title: '操作',
-      dataIndex: 'status',
+      dataIndex: 'action',
       width: 280,
       render: (_: any, record: any) => {
         if (record.seller_id == member_id) {
@@ -333,7 +333,7 @@ const RequestPage = () => {
     }
 
     // 根据您的API配置构建URL
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const baseUrl = process.env.NEXT_PUBLIC_IMG_URL || '';
     return `${baseUrl}/${path}`;
   };
 
@@ -369,7 +369,7 @@ const RequestPage = () => {
         <ResponsiveTable
           loading={loading}
           pagination={{
-            pageSize: 8,
+            pageSize: 10,
             showSizeChanger: true,
             showTotal: (total: number) => `共 ${total} 筆資料`,
           }}

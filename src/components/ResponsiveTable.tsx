@@ -45,7 +45,7 @@ function ResponsiveTable<T extends object>({
 
             return (
               <div
-                key={col.key}
+                key={col.dataIndex}
                 className="flex justify-between gap-4 items-center"
               >
                 <span className=" font-medium">
@@ -84,11 +84,14 @@ function ResponsiveTable<T extends object>({
       {/* Mobile Card List */}
       <div className={`md:hidden ${isMobile ? 'block' : 'hidden'}`}>
         <div className="grid gap-4 grid-cols-1">
-          {dataSource?.map((item, index) => (
-            <Card key={index}>
-              {cardRender ? cardRender(item) : autoCardRender(item)}
-            </Card>
-          ))}
+          {dataSource?.map((item) => {
+            const key = item[rowKey as keyof T] as string;
+            return (
+              <Card key={key}>
+                {cardRender ? cardRender(item) : autoCardRender(item)}
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@
 import { Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { ShoppingCartOutlined } from '@ant-design/icons';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import Api from '@/api';
 import usePointStore from '@/store/point';
@@ -12,6 +13,8 @@ import PointOrderCard, { PointOrderItem } from '@/components/PointOrderCard';
 import PointCardList from '@/components/PointCardList';
 
 const BuyPage = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedOrder, setSelectedOrder] = useState<{
     id: number;
     price: number;
@@ -24,9 +27,12 @@ const BuyPage = () => {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 9;
+  const [total, setTotal] = useState(0);
+  const pageSize = 12;
   const member_id = useInfoStore((state) => state.member_id);
+
+  // Get current page from URL or default to 1
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   const point_order = usePointStore(
     (state) => state.point_order,
@@ -35,13 +41,22 @@ const BuyPage = () => {
 
   useEffect(() => {
     loadOrders();
-  }, []);
+  }, [currentPage]);
 
   const loadOrders = () => {
     setLoading(true);
-    Api.Market.get_point_order()
+    Api.Market.get_point_order({
+      limit: pageSize,
+      page: currentPage,
+    })
       .then((res) => {
-        set_point_order(res.data);
+        if (res?.data?.data?.length > 0) {
+          set_point_order(res.data.data);
+          setTotal(res.data.total || 0);
+        } else {
+          set_point_order([]);
+          setTotal(0);
+        }
       })
       .finally(() => {
         setLoading(false);
@@ -49,8 +64,9 @@ const BuyPage = () => {
   };
 
   // Filter out orders from the current user
-  const filteredOrders =
-    point_order?.filter((order) => order.member_id !== member_id) || [];
+  const filteredOrders = point_order?.filter(
+    (order) => order.member_id !== member_id,
+  );
 
   const handleBuyClick = (record: PointOrderItem & { id: number }) => {
     setSelectedOrder({
@@ -64,7 +80,10 @@ const BuyPage = () => {
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    // Update URL with new page number
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', page.toString());
+    router.push(`?${params.toString()}`);
   };
 
   const renderOrderCard = (item: PointOrderItem, index: number) => (
@@ -97,9 +116,10 @@ const BuyPage = () => {
         description="在這裡您可以查看所有賣家的點數出售訂單，並選擇購買您需要的點數。"
         emptyText="目前沒有可用的出售訂單，請稍後再查看"
         renderItem={renderOrderCard}
-        showPagination={filteredOrders.length > pageSize}
+        showPagination={total > pageSize}
         pageSize={pageSize}
         currentPage={currentPage}
+        totalItems={total}
         onPageChange={handlePageChange}
       />
     </div>

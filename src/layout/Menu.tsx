@@ -9,13 +9,10 @@ import {
   MenuOutlined,
   CloseOutlined,
   CreditCardOutlined,
-  // HomeOutlined,
-  ShoppingOutlined,
-  // HistoryOutlined,
-  // WalletOutlined,
 } from '@ant-design/icons';
 import useInfoStore from '@/store/info';
 import { formatNumber } from '@/ultis/common';
+import NotificationComponent from './NotificationComponent';
 
 const LayoutMenu = () => {
   const pathname = usePathname();
@@ -48,36 +45,12 @@ const LayoutMenu = () => {
   }, [mobileMenuOpen]);
 
   const items = [
-    // {
-    //   label: '首頁',
-    //   key: 'home',
-    //   path: '/',
-    //   icon: <HomeOutlined />,
-    // },
     {
       label: '點數交易',
       key: 'point',
       path: '/point/trade',
       icon: <CreditCardOutlined />,
     },
-    {
-      label: '市場',
-      key: 'market',
-      path: '/market',
-      icon: <ShoppingOutlined />,
-    },
-    // {
-    //   label: '交易記錄',
-    //   key: 'history',
-    //   path: '/history',
-    //   icon: <HistoryOutlined />,
-    // },
-    // {
-    //   label: '我的錢包',
-    //   key: 'wallet',
-    //   path: '/wallet',
-    //   icon: <WalletOutlined />,
-    // },
   ];
 
   const handleClick = (path: string) => {
@@ -156,6 +129,9 @@ const LayoutMenu = () => {
                 <span className="text-xs text-gray-400">點數</span>
               </div>
 
+              {/* Transaction Notification */}
+              <NotificationComponent />
+
               <Dropdown
                 menu={{ items: menuItems }}
                 placement="bottomRight"
@@ -178,6 +154,9 @@ const LayoutMenu = () => {
                 </span>
                 <span className="text-xs text-gray-400">點</span>
               </div>
+
+              {/* Mobile Transaction Notification */}
+              <NotificationComponent isMobile={true} />
 
               <Button
                 type="text"
